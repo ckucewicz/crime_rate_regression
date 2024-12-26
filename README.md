@@ -34,13 +34,51 @@ The success of this project will be determined by the model’s ability to provi
 
 ### 2.1 Data Collection
 
-This project used data from multiple sources. Overall, I needed budget data, population data, and crime data for this project, which required pulling data from different sources.
+This project utilized data from multiple sources, focusing on budget data (city and public school system), population data, and crime data. These datasets were compiled from different sources and formats to create a cohesive analysis.
 
-The population data was taken from the Illinois Department of Public Health's population census, which was gathered through the U.S. Department of Commerce, 2020 Census. This contained population data for the City of Chicago every 10 years, starting in 1980, going until 2020. I compiled this data into a spreadsheet under the feature: `population`. Each row represented a single year from 1980-2024. Since the population data was only every 10 years, the intermediate years were left blank for now. During the data preparation phase, I address how I interpolated this missing population data.
+**Population Data**
 
-Crime data was pulled from 2 sources: Most recent crime data (2001-present) was taken from Chicago's Open Data Portal. For historical crime data, it was pulled from the Chicago Police department annual reports dating back to 1980. In the same spreadsheet, I created a new column labeled `num_of_crimes`. Using the annual police department reports, I entered the number of crimes for each year from 1980-2000. For the 2001-present crime data during the data understsanding phase, I use the crime dataset from Chicago's open data portal to merge data into the original spreadsheet. 
+The population data was sourced from the Illinois Department of Public Health’s population census, compiled through the U.S. Department of Commerce’s 2020 Census. This dataset provided decennial population figures for the City of Chicago from 1980 to 2020.
 
-The budget data was gathered from the city of Chicago's Clerk's records database. The database included the annual appropriation ordinances dating all the way back to 1982. From within each report, I extracted the following information: total approportioned budget, total police department appropriation, department of public health appropriation, department of streets and sanitation appropriation, public library appropriation, department of transportation, department for family and support services, department of housing, department of planning and development, office of budget and management (funds parks department)
+-   I compiled this data into a spreadsheet under the column population, where each row represented a single year from 1980–2024.
+
+-   Since the data only covered every 10 years, intermediate years were initially left blank. During the data preparation phase, I address how these gaps were interpolated.
+
+**Crime Data**
+
+Crime data was gathered from two main sources: 1. Chicago’s Open Data Portal: Provided recent crime data from 2001 to the present. 2. Chicago Police Department Annual Reports: Supplied historical crime data from 1980 to 2000.
+
+In the compiled dataset, I added a column labeled `num_of_crimes`:
+
+-   For years 1980–2000, I manually entered data from the annual police department reports.
+
+-   For years 2001–present, I used the Open Data Portal to merge crime data into the spreadsheet during the data understanding phase.
+
+**City Budget Data**
+
+City budget data was collected from the Chicago City Clerk’s records database, which included annual appropriation ordinances dating back to 1982. From these reports, I extracted the following data points:
+
+-   Total appropriated budget
+-   Appropriations for specific departments:
+-   Police Department
+-   Department of Public Health
+-   Streets and Sanitation
+-   Public Library
+-   Department of Transportation
+-   Department of Family and Support Services
+-   Department of Housing
+-   Department of Planning and Development
+-   Office of Budget and Management (which funds the Parks Department)
+
+I chose to focus on these departments and bureaus based on my domain knowledge and it feels like these are the ones that feel closest to affecting on the ground human life.
+
+Public School System Budget Data
+
+Public school budget data was sourced from the Chicago Public Schools (CPS) annual budget reports. CPS revenue generally falls into three categories: local, state, and federal funding.
+
+-   I chose to focus on state funding, as it is more adjustable than local property taxes and more locally relevant than federal funding.
+
+-   This data was added to the spreadsheet under the column state_funding.
 
 ### 2.2 Data Understanding
 
