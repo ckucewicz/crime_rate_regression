@@ -14,9 +14,11 @@ Regression analysis of Chicago crime rates against city budget data
 
 ### 1.1 Background
 
-Crime is a central concern for many city and suburban residents, often leading to contentious discussions regarding city budgets. Proponents of increased police funding argue that it is essential for maintaining public safety. Conversely, there is a growing movement, rooted in the advocacy of activists like Martin Luther King Jr. and Angela Davis, calling for defunding or even abolishing the police. While this idea has existed for many years, it has gained significant momentum in recent times, particularly following the tragic murder of George Floyd by Minneapolis police officer Derek Chauvin.
+Crime is a central concern for many city and suburban residents, often leading to contentious discussions regarding city budgets. Proponents of increased police funding argue that it is essential for maintaining public safety. Conversely, there is a growing movement, rooted in the advocacy of activists like Martin Luther King Jr. and Angela Davis, calling for defunding or even abolishing the police. While this idea has existed for many years, it has gained significant momentum in recent times, particularly following the tragic murder of George Floyd by Minneapolis police officer Derek Chauvin. 
 
-These contrasting views create difficult challenges for city officials, particularly in cities like Chicago, when making decisions about annual budget allocations. Balancing the needs of various sectors—such as education, parks, libraries, etc.—while addressing calls for increased police funding requires careful consideration and data-driven decision-making.
+This movement argues that redirecting funds from police departments toward public health programs, community centers, public parks, transportation, and affordable housing could create safer and more equitable communities by addressing the root causes of crime.
+
+In cities like Chicago, these opposing viewpoints pose significant challenges for city officials tasked with determining annual budget allocations. Striking a balance between sectors such as education, parks, libraries, and public safety requires not only careful prioritization but also robust, data-driven decision-making to address both community needs and public safety concerns.
 
 ### 1.2 Goals
 
