@@ -91,7 +91,8 @@ Public school budget data was sourced from the Chicago Public Schools (CPS) annu
 
 ```{r}
 # installing tidyverse packages
-install.packages('tidyverse')
+#install.packages('tidyverse')
+install.packages("ggcorrplot")
 ```
 
 ```{r}
@@ -99,6 +100,8 @@ install.packages('tidyverse')
 library(tidyverse)
 library(dplyr)
 library(lubridate)
+library(ggcorrplot)
+library(reshape2)
 ```
 
 ```{r}
@@ -109,6 +112,10 @@ budget_df <- read_csv('./data/crime_rate_regression - Data.csv')
 ```{r}
 str(budget_df)
 ```
+```{r}
+summary(budget_df)
+```
+
 ```{r}
 budget_df %>%
   select_if(is.numeric) %>%
@@ -302,13 +309,13 @@ colnames(budget_and_crime_cnt_df)
 ```
 
 ```{r}
+budget_dollars_df <- budget_and_crime_cnt_df %>%
+  select(crime_rate, library_funding, parks_facilities_and_environmental_funding, human_and_comm_services_funding, house_and_comm_devel_funding, streets_sanit_allocation, police_allocation, public_health_allocation, budget_and_mgmt_allocation, cps_state_revenue)
+
+budget_percentage_df <- budget_and_crime_cnt_df %>%
+  select(crime_rate, library_funding_percentage, parks_facilities_and_environmental_funding_percentage, human_and_comm_services_funding_percentage, house_and_comm_devel_funding_percentage, streets_sanit_allocation_percentage, police_allocation_percentage, public_health_allocation_percentage, budget_and_mgmt_allocation_percentage, cps_state_rev_percent_of_total)
 
 ```
-
-
-```{r}
-```
-
 
 
 ## 3. Exploratory Data Analysis
@@ -317,6 +324,102 @@ colnames(budget_and_crime_cnt_df)
 
 ```
 
+```{r}
+# scatterplot of police budget and crime_rate
+ggplot(budget_and_crime_cnt_df, aes(x = police_allocation, y = crime_rate)) +
+  geom_point()
+```
+
+```{r}
+# scatterplot of police budget percentage and crime_rate
+ggplot(budget_and_crime_cnt_df, aes(x = police_allocation_percentage, y = crime_rate)) +
+  geom_point()
+```
+```{r}
+corr_dollars <- round(cor(budget_dollars_df), 4)
+corr_dollars
+```
+```{r}
+ggcorrplot(corr_dollars, 
+           method = "circle",
+           type = "lower",
+           lab = TRUE,
+           lab_size = 3,
+           tl.cex = 10,
+           )
+```
+```{r}
+corr_dollars_melted <- melt(corr_dollars)
+
+high_corr_pairs <- corr_dollars_melted %>%
+  filter(abs(value) > 0.75, Var1 != Var2) %>%
+  mutate(Var1 = as.character(Var1),
+         Var2 = as.character(Var2),
+         Var1 = pmin(Var1, Var2), 
+         Va2 = pmax(Var1, Var2)) %>%
+  select(Var1, Var2, value)
+
+high_corr_pairs <- high_corr_pairs %>%
+  distinct(Var1, Var2, .keep_all = TRUE) %>%
+  arrange(desc(abs(value)))
+```
+
+```{r}
+high_corr_pairs
+```
+
+```{r}
+corr_percentage <- round(cor(budget_percentage_df), 4)
+corr_percentage
+```
+
+```{r}
+ggcorrplot(corr_percentage,
+           method = "circle",
+           type = "lower",
+           lab = TRUE,
+           lab_size = 3, 
+           tl.cex = 10) +
+  theme(axis.text.x = element_text(angle = 24, hjust = 1))
+```
+
+corr_dollars_melted <- melt(corr_dollars)
+
+high_corr_pairs <- corr_dollars_melted %>%
+  filter(abs(value) > 0.75, Var1 != Var2) %>%
+  mutate(Var1 = as.character(Var1),
+         Var2 = as.character(Var2),
+         Var1 = pmin(Var1, Var2), 
+         Va2 = pmax(Var1, Var2)) %>%
+  select(Var1, Var2, value)
+
+high_corr_pairs <- high_corr_pairs %>%
+  distinct(Var1, Var2, .keep_all = TRUE) %>%
+  arrange(desc(abs(value)))
+
+```{r}
+corr_percentage_melted <- melt(corr_percentage)
+
+high_corr_perc_pairs <- corr_percentage_melted %>%
+  filter(abs(value) > 0.75, Var1 != Var2) %>%
+  mutate(Var1 = as.character(Var1),
+         Var2 = as.character(Var2),
+         Var1 = pmin(Var1, Var2),
+         Var2 = pmax(Var1, Var2)) %>%
+  select(Var1, Var2, value)
+
+high_corr_perc_pairs <- high_corr_perc_pairs %>%
+  distinct(Var1, Var2, .keep_all = TRUE) %>%
+  arrange(desc(abs(value)))
+```
+
+```{r}
+high_corr_perc_pairs
+```
+
+
+```{r}
+```
 
 ## 4. Modeling
 
