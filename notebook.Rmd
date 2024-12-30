@@ -90,6 +90,12 @@ Public school budget data was sourced from the Chicago Public Schools (CPS) annu
 ### 2.2 Data Understanding
 
 ```{r}
+```
+
+```{r}
+```
+
+```{r}
 # installing tidyverse packages
 #install.packages('tidyverse')
 install.packages("ggcorrplot")
@@ -112,6 +118,7 @@ budget_df <- read_csv('./data/crime_rate_regression - Data.csv')
 ```{r}
 str(budget_df)
 ```
+
 ```{r}
 summary(budget_df)
 ```
@@ -128,12 +135,16 @@ budget_df %>%
   labs(title = "Histograms for Each Feature", x = "Value", y = "Frequency")
 ```
 
+```{r}
+ggplot(budget_df, aes(x = police_allocation)) +
+  geom_histogram()
+```
+
 ### 2.3 Data Preparation
 
 ```{r}
 budget_2002_to_present <- subset(budget_df, year >= 2002 & year <= 2025)
 ```
-
 
 ```{r}
 str(budget_2002_to_present)
@@ -161,11 +172,9 @@ budget_2002_to_present[] <- lapply(budget_2002_to_present, as.numeric)
 budget_2002_to_present$`cps_total_revenue` <- budget_2002_to_present$`cps_total_revenue ($ millions)` * 1000000
 ```
 
-
 ```{r}
 budget_2002_to_present$`cps_state_revenue` <- budget_2002_to_present$`cps_state_revenue ($ millions)` * 1000000
 ```
-
 
 ```{r}
 budget_2002_to_present$library_funding <- rowSums(budget_2002_to_present[, c("CPL_building_and_sites_allocation", "CPL_building_sites_fin_general", "CPL_maintenance_and_ops_allocation", "other_ops_expenses_allocation")], na.rm = TRUE)
@@ -219,7 +228,6 @@ budget_2002_to_present <- budget_2002_to_present[, !colnames(budget_2002_to_pres
 )]
 ```
 
-
 ```{r}
 # interpolating population based on 10-year census data
 budget_2002_to_present$year <- as.integer(budget_2002_to_present$year)
@@ -240,11 +248,9 @@ for (col in columns_to_percents) {
 }
 ```
 
-
 ```{r}
 budget_2002_to_present$cps_state_rev_percent_of_total <- round((budget_2002_to_present$cps_state_revenue / budget_2002_to_present$cps_total_revenue) * 100, digits = 4)
 ```
-
 
 ```{r}
 crime_df <- read_csv('./data/Crimes_-_2001_to_Present_20241225.csv')
@@ -270,7 +276,6 @@ crime_df_filtered <- crime_df_filtered %>%
   distinct(ID, `Case Number`, .keep_all = TRUE)
 ```
 
-
 ```{r}
 #counts the number of reported crimes per year
 crime_count_by_year <- crime_df_filtered %>%
@@ -278,7 +283,6 @@ crime_count_by_year <- crime_df_filtered %>%
   summarise(crime_count = n())
 
 ```
-
 
 ```{r}
 rm(crime_df_filtered)
@@ -298,7 +302,6 @@ budget_and_crime_cnt_df <- budget_and_crime_cnt_df %>%
   filter(!(year %in% c(2002, 2021, 2022)))
 ```
 
-
 ```{r}
 #creates a crime rate column
 budget_and_crime_cnt_df$crime_rate <- budget_and_crime_cnt_df$num_of_crimes / budget_and_crime_cnt_df$population
@@ -317,7 +320,6 @@ budget_percentage_df <- budget_and_crime_cnt_df %>%
 
 ```
 
-
 ## 3. Exploratory Data Analysis
 
 ```{r}
@@ -335,10 +337,46 @@ ggplot(budget_and_crime_cnt_df, aes(x = police_allocation, y = crime_rate)) +
 ggplot(budget_and_crime_cnt_df, aes(x = police_allocation_percentage, y = crime_rate)) +
   geom_point()
 ```
+
+```{r}
+budget_and_crime_cnt_df <- budget_and_crime_cnt_df %>%
+  mutate(log_police_budget = log(police_allocation + 1))
+```
+
+```{r}
+budget_and_crime_cnt_df <- budget_and_crime_cnt_df %>%
+  mutate(log_police_percentage = log(police_allocation_percentage + 1))
+```
+
+```{r}
+# applying log transformation to 
+ggplot(budget_and_crime_cnt_df, aes(x = log_police_budget, y = crime_rate)) +
+  geom_point()
+```
+
+
+```{r}
+ggplot(budget_and_crime_cnt_df, aes(x = log_police_percentage, y = crime_rate)) +
+  geom_point()
+```
+
+```{r}
+
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
 ```{r}
 corr_dollars <- round(cor(budget_dollars_df), 4)
 corr_dollars
 ```
+
 ```{r}
 ggcorrplot(corr_dollars, 
            method = "circle",
@@ -348,6 +386,7 @@ ggcorrplot(corr_dollars,
            tl.cex = 10,
            )
 ```
+
 ```{r}
 corr_dollars_melted <- melt(corr_dollars)
 
@@ -383,19 +422,11 @@ ggcorrplot(corr_percentage,
   theme(axis.text.x = element_text(angle = 24, hjust = 1))
 ```
 
-corr_dollars_melted <- melt(corr_dollars)
+corr_dollars_melted \<- melt(corr_dollars)
 
-high_corr_pairs <- corr_dollars_melted %>%
-  filter(abs(value) > 0.75, Var1 != Var2) %>%
-  mutate(Var1 = as.character(Var1),
-         Var2 = as.character(Var2),
-         Var1 = pmin(Var1, Var2), 
-         Va2 = pmax(Var1, Var2)) %>%
-  select(Var1, Var2, value)
+high_corr_pairs \<- corr_dollars_melted %\>% filter(abs(value) \> 0.75, Var1 != Var2) %\>% mutate(Var1 = as.character(Var1), Var2 = as.character(Var2), Var1 = pmin(Var1, Var2), Va2 = pmax(Var1, Var2)) %\>% select(Var1, Var2, value)
 
-high_corr_pairs <- high_corr_pairs %>%
-  distinct(Var1, Var2, .keep_all = TRUE) %>%
-  arrange(desc(abs(value)))
+high_corr_pairs \<- high_corr_pairs %\>% distinct(Var1, Var2, .keep_all = TRUE) %\>% arrange(desc(abs(value)))
 
 ```{r}
 corr_percentage_melted <- melt(corr_percentage)
@@ -416,7 +447,6 @@ high_corr_perc_pairs <- high_corr_perc_pairs %>%
 ```{r}
 high_corr_perc_pairs
 ```
-
 
 ```{r}
 ```
