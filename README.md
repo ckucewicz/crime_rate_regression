@@ -1,6 +1,7 @@
 # Crime Rate Prediction using Chicago Budget Data
 Regression analysis of Chicago crime rates against city budget data
 
+<img src="images/chi_crime_rate_header_image.jpg" alt="Arial view of the Chicago skyline" width="80%"/>
 
 ## 1. Project Overview
 
