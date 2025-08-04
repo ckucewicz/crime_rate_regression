@@ -62,3 +62,9 @@ data_clean[cps_revenue_cols] <- lapply(data_clean[cps_revenue_cols], function(x)
 # --- 1.7 Adjust dollar amounts for inflation
 #      - Convert all dollar-based columns to constant dollars (e.g., 2024 USD)
 #      - Use CPI or GDP deflator from BLS or FRED
+
+
+# Read in crime data
+# Adjust dollar amounts for inflation (to 2024 USD)
+# Normalize budget variables (as share of total budget)
+# Calculate crime rates per 100k population
