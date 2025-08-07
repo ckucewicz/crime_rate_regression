@@ -54,6 +54,34 @@ Crime is a central concern for many Chicago residents. Debates around how to red
 * Column: `state_funding`
 
 ## 5. Methods
+This analysis followed a multi-step process to prepare and standardize data before modeling:
+
+1.	Data Cleaning
+   
+Removed commas and currency symbols from numeric fields and converted all relevant columns to numeric types. Standardized missing values (e.g., blank strings, “n/a”) as NA.
+
+2.	Population Interpolation
+   
+Because official population counts are available only for census years, missing values for intermediate years were estimated using linear interpolation. This method was chosen because Chicago’s population changes relatively gradually from year to year, making straight-line estimates between census points a reasonable and transparent assumption that avoids overfitting.
+
+3.	Inflation Adjustment
+   
+Adjusted all dollar-based variables to constant 2024 USD using annual CPI data from the Bureau of Labor Statistics. This ensured that monetary values were directly comparable over time and not distorted by inflationary effects.
+
+4.	Budget Normalization
+   
+Created two versions of budget variables:
+  * Share of total budget — the primary normalization, aligning directly with the research question on relative spending priorities. This focuses on proportional allocation, which is often more meaningful for policy analysis than absolute dollar amounts.
+
+  * Per capita — a secondary normalization to account for changes in population size. This matters because a larger population can dilute the per-person availability of resources, even if the total allocation rises. Including per capita measures allows for a robustness check against this effect.
+
+5.	Crime Rate Standardization
+
+Converted raw crime counts to rates per 100,000 residents. This is a common criminological standard that enables meaningful comparisons across years with varying population sizes.
+
+6. Planned Analysis
+
+The next stage will involve regression modeling, including potential lagged budget variables to account for the fact that changes in public spending may take years to influence crime rates.
 
 ## 6. Key Findings
 
