@@ -37,21 +37,25 @@ Crime is a central concern for many Chicago residents. Debates around how to red
 
 * Source: Chicago City Clerk Records (Annual Appropriation Ordinances)
 * Departments included:
-* Police Department
-* Department of Public Health
-* Streets and Sanitation
-* Public Library
-* Department of Transportation
-* Department of Family and Support Services
-* Department of Housing
-* Department of Planning and Development
-* Office of Budget and Management (parks funding)
+  * Police Department
+  * Department of Public Health
+  * Streets and Sanitation
+  * Public Library
+  * Department of Transportation
+  * Department of Family and Support Services
+  * Department of Housing
+  * Department of Planning and Development
+  * Office of Budget and Management (parks funding)
   
 **CPS Budget Data**
 
 * Source: Chicago Public Schools Annual Budget Reports
 * Focus: State-level education funding only (excluded local property and federal funds)
 * Column: `state_funding`
+
+**Inflation Data**
+* Source: U.S. Bureau of Labor Statistics (BLS) – Consumer Price Index (CPI-U), All Urban Consumers, U.S. City Average, All Items.
+* Coverage: Monthly CPI data from 2001–2024. Annual averages were used for inflation adjustment to 2024 USD.
 
 ## 5. Methods
 This analysis followed a multi-step process to prepare and standardize data before modeling:
