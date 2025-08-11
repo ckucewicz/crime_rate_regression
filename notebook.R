@@ -10,15 +10,18 @@ data <- read.csv('data/crime_rate_regression_data.csv', na.strings = c("", "NA",
 
 # ---- STEP 1: Data Cleaning ----
 
-# --- 1.1 Drop rows before 2000 or after 2024 ---
+# --- 1.1 remove num of crimes column from data_clean
+data <- data %>% 
+  select(-num_of_crimes)
+# --- 1.2 Drop rows before 2000 or after 2024 ---
 data_2000_to_present <- data[(data$year >=2000) & (data$year <2025), ]
 
 
-# --- 1.2 Clean column names ---
+# --- 1.3 Clean column names ---
 data_2000_to_present <- clean_names(data_2000_to_present)
 
 
-# --- 1.3 Convert character-formatted numeric columns to actual numeric (remove $ and ,)
+# --- 1.4 Convert character-formatted numeric columns to actual numeric (remove $ and ,)
 #      - Includes population, crime counts, budget allocations, and CPS revenue columns
 
 # make a copy
@@ -35,7 +38,7 @@ data_clean[char_cols] <- lapply(data_clean[char_cols], function(x) {
   as.numeric(x)
 })
 
-# --- 1.4 Interpolate missing population values between census years
+# --- 1.5 Interpolate missing population values between census years
 
 # (x,y) need to return rows where population is known
 known_data <- data_clean[!is.na(data_clean$population), c('year', 'population')]
@@ -55,15 +58,12 @@ data_clean$population <- ifelse(
   data_clean$population
 )
 
-# --- 1.5 Convert CPS revenue (originally in millions) to full dollars ---
+# --- 1.6 Convert CPS revenue (originally in millions) to full dollars ---
 cps_revenue_cols <- c("cps_total_revenue_millions", "cps_state_revenue_millions")
 
 data_clean[cps_revenue_cols] <- lapply(data_clean[cps_revenue_cols], function(x) x*1e6)
 
-# --- 1.7 Adjust dollar amounts for inflation
-#      - Convert all dollar-based columns to constant dollars (e.g., 2024 USD)
-#      - Use CPI or GDP deflator from BLS or FRED
-
+# --- 1.7 Include crime counts from crime dataset 
 
 # Read in crime data
 crime_data <- read.csv("~/Documents/DataSciencefiles/r_projects/crime_rate_regression/data/Crimes_-_2001_to_Present_20241225.csv")
