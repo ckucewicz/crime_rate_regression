@@ -132,53 +132,85 @@ crimes <- cd %>%
     property_flag = index_flag & primary_desc %in% property_crimes
   )
 
-# Collapse to incident level (unique Case.Number within Year) with a priority rule: 
-# violent > property > non-index
+# --- Add homicide flags (Index-only and all types) ---
+crimes <- crimes %>%
+  mutate(
+    homicide_index_flag = index_flag & primary_desc == "HOMICIDE",
+    homicide_any_flag   = primary_desc == "HOMICIDE"
+  )
 
+# Collapse to incident level (with homicide rollups)
 incidents <- crimes %>%
   group_by(Year, Case.Number) %>%
-  summarize(
-    any_index_violent = any(violent_flag, na.rm = TRUE),
-    any_index_property = any(property_flag, na.rm = TRUE),
-    any_index_any = any(index_flag, na.rm = TRUE),
+  summarise(
+    any_index_violent   = any(violent_flag, na.rm = TRUE),
+    any_index_property  = any(property_flag, na.rm = TRUE),
+    any_index_any       = any(index_flag, na.rm = TRUE),
+    any_homicide_index  = any(homicide_index_flag, na.rm = TRUE),
+    any_homicide_any    = any(homicide_any_flag, na.rm = TRUE),
     .groups = "drop"
   ) %>%
   mutate(
     category = dplyr::case_when(
-      any_index_violent ~ "index_violent",
+      any_index_violent  ~ "index_violent",
       any_index_property ~ "index_property",
-      any_index_any ~ "index_other",
-      TRUE ~ "nonindex"
+      any_index_any      ~ "index_other",
+      TRUE               ~ "nonindex"
     )
   )
 
-# Yearly counts for the 5 new columns
+# Yearly counts (add homicide columns)
 crime_yearly <- incidents %>%
   group_by(Year) %>%
-  summarize(
-    crime_all = n(),
-    crime_index_violent = sum(category == "index_violent"),
+  summarise(
+    crime_all            = n(),
+    crime_index_violent  = sum(category == "index_violent"),
     crime_index_property = sum(category == "index_property"),
-    crime_index_all = sum(category %in% c("index_violent", "index_property", "index_other")),
-    crime_nonindex = sum(category == "nonindex"),
+    crime_index_all      = sum(category %in% c("index_violent", "index_property", "index_other")),
+    crime_nonindex       = sum(category == "nonindex"),
+    crime_homicide_index = sum(any_homicide_index),
+    crime_homicide_all   = sum(any_homicide_any),
     .groups = "drop"
   )
 
-# QA - will error if something is off
-stopifnot(all(crime_yearly$crime_all == 
-            crime_yearly$crime_index_all + crime_yearly$crime_nonindex))
+# QA checks
+stopifnot(all(crime_yearly$crime_all ==
+                crime_yearly$crime_index_all + crime_yearly$crime_nonindex))
+stopifnot(all(crime_yearly$crime_homicide_index <= crime_yearly$crime_index_violent))
 
-# merge columns into data_clean
+# ensuring Year names match
+crime_yearly <- crime_yearly %>%
+  rename(year = Year)
+
+# join crime data into data_clean
+
 data_clean <- data_clean %>%
-  left_join(crime_yearly, by = c("year" = "Year"))
+  left_join(crime_yearly, by = "year")
 
-# remove big intermediate dataset in order to free up memory
-rm(crime_data, crime_codes, crime_data_clean, crime_codes_clean, cd, crimes, incidents)
+# Remove large intermediate datasets to free up memory
+rm(crime_yearly,
+   crime_data,
+   crime_codes,
+   crime_data_clean,
+   crime_codes_clean,
+   cd,
+   crimes,
+   incidents)
 
-# force garbage collection
+# Force garbage collection
 gc()
 
+# --- 1.8 Calculate crime rates per 100k population ---
 
+data_clean <- data_clean %>%
+  mutate(
+    rate_all_per_100k = (crime_all / population) * 1e5,
+    rate_index_violent_per_100k = (crime_index_violent / population) * 1e5,
+    rate_index_property_per_100k = (crime_index_property / population) * 1e5,
+    rate_nonindex_per_100k = (crime_nonindex / population) * 1e5,
+    rate_homicide_all_per_100k = (crime_homicide_all / population) * 1e5,
+    rate_homicide_index_per_100k = (crime_homicide_index / population) * 1e5
+   )
 # Adjust dollar amounts for inflation (to 2024 USD)
 # Normalize budget variables (as share of total budget)
-# Calculate crime rates per 100k population
+
