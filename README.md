@@ -58,7 +58,7 @@ Crime is a central concern for many Chicago residents. Debates around how to red
 * Coverage: Monthly CPI data from 2001–2024. Annual averages were used for inflation adjustment to 2024 USD.
 
 ## 5. Methods
-This analysis followed a multi-step process to prepare and standardize data before modeling:
+This analysis followed a multi-step process to prepare and standardize data before modeling. [View full methodology](https://github.com/ckucewicz/crime_rate_regression/blob/main/docs/methodology.md)
 
 1.	Data Cleaning
    
