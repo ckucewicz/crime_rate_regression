@@ -28,11 +28,20 @@ viz_long <- model_data %>%
   select(year, population, total_budget, rate_all_per_100k, rate_index_violent_per_100k, rate_index_property_per_100k, rate_homicide_all_per_100k) %>%
   pivot_longer(-year, names_to = "series", values_to = "value")
 
+crime_rates_long <- model_data %>%
+  select(year, starts_with("rate_")) %>%
+  filter(year > 2002) %>%
+  pivot_longer(-year, names_to = "category", values_to = "rate")
+
 # line graph of population, budget, crime
 ggplot(data = viz_long, aes(x = year, y = value)) +
   geom_line() +
   facet_wrap(~series, scales = "free_y") 
 
+# line graph of crime rate trends 2003-2024
+ggplot(data = crime_rates_long, aes(x = year, y = rate)) +
+  geom_line() +
+  facet_wrap(~category, scales = "free_y")
 
 # animated bar graph of pcs that adjusts by year
 p <- ggplot(
@@ -97,8 +106,17 @@ anim_save("budget_share.gif", gif)
 summary(model_data)
 
 # 1.3 Correlation Analysis
-numeric_model_data <- model_data %>%
-  select(where(is.numeric))
+
+# 1.3.A Create correlation groups
+
+raw_allocation <- model_data %>%
+  select()
+
+per_capita <- model_data %>%
+  select()
+
+budget_share <- model_data %>%
+  select()
 
 correlation_matrix <- cor(numeric_model_data, method = "pearson", use = "pairwise.complete.obs")
 

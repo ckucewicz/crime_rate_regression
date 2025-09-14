@@ -20,7 +20,7 @@ library(readr)
 options(tigris_use_cache = TRUE)
 
 # (Run once per machine or put in ~/.Renviron as CENSUS_API_KEY)
-#census_api_key("1d0f3270ded3f6459d20e1f05fc6274439d708ef", install = TRUE)
+#census_api_key("your_key_here", install = TRUE)
 
 # -------------------------
 # Helper(s)
