@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crime & Budget in Chicago | Data Analysis</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0f2340;
+      --blue:   #1a4a7a;
+      --accent: #2f80c0;
+      --sky:    #e8f2fb;
+      --white:  #ffffff;
+      --off:    #f7f8fa;
+      --text:   #1c2530;
+      --muted:  #5a6a7a;
+      --border: #d0dce8;
+      --red:    #c0392b;
+      --green:  #1e7e4a;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.7;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--navy);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    nav .brand {
+      color: var(--white);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+    nav ul a {
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    nav ul a:hover { color: var(--white); }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+      color: var(--white);
+      padding: 6rem 2rem 5rem;
+      text-align: center;
+    }
+    .hero .tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px;
+      padding: 0.3rem 1rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      line-height: 1.15;
+      max-width: 800px;
+      margin: 0 auto 1.5rem;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      max-width: 620px;
+      margin: 0 auto 2.5rem;
+      color: rgba(255,255,255,0.82);
+      font-weight: 300;
+    }
+    .hero-meta {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.65);
+    }
+    .hero-meta span strong {
+      display: block;
+      color: var(--white);
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: 5rem 2rem; }
+    .container { max-width: 960px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      color: var(--navy);
+      margin-bottom: 1.25rem;
+      line-height: 1.2;
+    }
+    .lead {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 680px;
+      margin-bottom: 3rem;
+      font-weight: 300;
+    }
+
+    /* ── CONTEXT ── */
+    .context { background: var(--off); }
+    .context-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    @media (max-width: 640px) { .context-grid { grid-template-columns: 1fr; } }
+    .context-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.75rem;
+    }
+    .context-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.6rem;
+    }
+    .context-card p {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── KEY FINDINGS ── */
+    .findings { background: var(--white); }
+    .findings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 0.5rem;
+    }
+    @media (max-width: 640px) { .findings-grid { grid-template-columns: 1fr; } }
+    .finding-card {
+      border-radius: 10px;
+      padding: 1.75rem;
+      border-left: 4px solid transparent;
+    }
+    .finding-card.neutral { background: var(--sky); border-color: var(--accent); }
+    .finding-card.caution { background: #fdf3f2; border-color: var(--red); }
+    .finding-card.positive { background: #f0faf4; border-color: var(--green); }
+    .finding-card.highlight { background: #fffbf0; border-color: #e0a020; }
+    .finding-card .num {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .finding-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+      line-height: 1.35;
+    }
+    .finding-card p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── VISUALIZATIONS ── */
+    .viz { background: var(--off); }
+    .viz-block {
+      margin-bottom: 4rem;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .viz-block:last-child { margin-bottom: 0; }
+    .viz-header {
+      padding: 1.5rem 2rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .viz-header h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.35rem;
+    }
+    .viz-header p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .viz-body {
+      padding: 1.5rem 2rem;
+      text-align: center;
+      background: #fafbfc;
+    }
+    .viz-body img {
+      max-width: 100%;
+      border-radius: 6px;
+    }
+    .viz-placeholder {
+      background: var(--border);
+      border-radius: 6px;
+      padding: 4rem 2rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-style: italic;
+    }
+    .viz-caption {
+      padding: 1rem 2rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      background: var(--white);
+      line-height: 1.55;
+    }
+
+    /* ── METHODOLOGY SUMMARY ── */
+    .method { background: var(--navy); color: var(--white); }
+    .method h2 { color: var(--white); }
+    .method .lead { color: rgba(255,255,255,0.65); }
+    .method-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    .method-step {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 1.5rem;
+    }
+    .method-step .step-num {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .method-step h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 0.4rem;
+    }
+    .method-step p {
+      font-size: 0.83rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.55;
+    }
+    .method-note {
+      margin-top: 2.5rem;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      padding: 1.5rem 2rem;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.65;
+    }
+    .method-note a {
+      color: #7ec8f0;
+      text-decoration: none;
+    }
+    .method-note a:hover { text-decoration: underline; }
+
+    /* ── DATA SOURCES ── */
+    .sources { background: var(--white); }
+    .sources-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .source-item {
+      background: var(--off);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+    .source-item h4 {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.3rem;
+    }
+    .source-item p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy);
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 2.5rem 2rem;
+      font-size: 0.83rem;
+    }
+    footer a {
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    footer a:hover { color: var(--white); }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* ── DIVIDER ── */
+    hr.section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 3rem 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="brand" href="#">Chicago Crime & Budget</a>
+  <ul>
+    <li><a href="#findings">Findings</a></li>
+    <li><a href="#visualizations">Visualizations</a></li>
+    <li><a href="#methodology">Methodology</a></li>
+    <li><a href="#data">Data</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="tag">Data Analysis · Chicago · 2001–2024</div>
+  <h1>Does How Chicago Spends Its Budget Predict Crime?</h1>
+  <p>A regression analysis of city budget allocations and crime rates across two decades — and what the data actually shows.</p>
+  <div class="hero-meta">
+    <span><strong>2001–2024</strong>Years of Data</span>
+    <span><strong>8</strong>City Departments</span>
+    <span><strong>6</strong>Crime Outcomes</span>
+    <span><strong>2</strong>Model Specifications</span>
+  </div>
+</header>
+
+<!-- CONTEXT -->
+<section class="context" id="context">
+  <div class="container">
+    <div class="section-label">Background</div>
+    <h2>The Question Behind the Numbers</h2>
+    <p class="lead">Public debates about crime in Chicago often center on how the city spends its money. This project asks what the data says.</p>
+    <div class="context-grid">
+      <div class="context-card">
+        <h3>The Police Funding Argument</h3>
+        <p>More officers on the street means faster response times, greater deterrence, and lower crime. Proponents argue that cutting police budgets puts communities at risk.</p>
+      </div>
+      <div class="context-card">
+        <h3>The Social Investment Argument</h3>
+        <p>Thinkers from Martin Luther King Jr. to Angela Davis have argued that addressing root causes of crime — poverty, housing instability, lack of opportunity — is more effective than policing.</p>
+      </div>
+      <div class="context-card">
+        <h3>What This Project Does</h3>
+        <p>Using publicly available budget and crime data from 2001 to 2024, this analysis examines whether changes in departmental spending shares are statistically associated with changes in crime rates.</p>
+      </div>
+      <div class="context-card">
+        <h3>What This Project Can't Do</h3>
+        <p>Observational data over 24 years cannot establish causation. Budget decisions happen alongside economic shifts, demographic changes, and federal policy — all of which also influence crime.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KEY FINDINGS -->
+<section class="findings" id="findings">
+  <div class="container">
+    <div class="section-label">Key Findings</div>
+    <h2>What the Data Shows</h2>
+    <p class="lead">Budget shares correlate with crime at first glance — but most of those correlations have a simpler explanation.</p>
+    <div class="findings-grid">
+
+      <div class="finding-card neutral">
+        <div class="num">Finding 01</div>
+        <h3>Most correlations are driven by a shared time trend</h3>
+        <p>Crime in Chicago declined substantially from 2001 to 2024, and budget compositions shifted over the same period. When year is controlled for, most budget-crime correlations disappear — suggesting they reflect parallel trends, not independent relationships.</p>
+      </div>
+
+      <div class="finding-card caution">
+        <div class="num">Finding 02</div>
+        <h3>Police, human services, and library shares don't hold up</h3>
+        <p>Despite high bivariate R² values (0.72–0.81), police funding share, human services share, and library share all lose statistical significance once the time trend is accounted for. The data does not support strong independent claims about any of these.</p>
+      </div>
+
+      <div class="finding-card positive">
+        <div class="num">Finding 03</div>
+        <h3>Two predictors survive year control</h3>
+        <p>Streets & Sanitation share and CPS state funding share retain statistically significant associations with crime after controlling for year — though both in positive directions that are difficult to interpret causally, and may reflect socioeconomic proxies rather than direct effects.</p>
+      </div>
+
+      <div class="finding-card highlight">
+        <div class="num">Finding 04</div>
+        <h3>Homicides are the hardest outcome to predict</h3>
+        <p>Homicide rates — the most reliably reported crime type and least susceptible to detection bias — show the weakest associations with budget variables across all model specifications. No budget predictor significantly predicts homicide rates after controlling for year.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- VISUALIZATIONS -->
+<section class="viz" id="visualizations">
+  <div class="container">
+    <div class="section-label">Visualizations</div>
+    <h2>Exploring the Data</h2>
+    <p class="lead">How crime rates and budget allocations have changed across two decades in Chicago.</p>
+
+    <!-- Crime Rate Trends -->
+    <div class="viz-block">
+      <div class="viz-header">
+        <h3>Crime Rate Trends, 2001–2024</h3>
+        <p>All crime types declined substantially over the study period, with the steepest drops in property and non-index crime. Homicide rates followed a different trajectory, rising sharply around 2016 before declining again.</p>
+      </div>
+      <div class="viz-body">
+        <img src="assets/crime_rate_trends.png" alt="Crime rate trends in Chicago 2001–2024"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div class="viz-placeholder" style="display:none;">
+          [ crime_rate_trends.png — export from R and place in assets/ ]
+        </div>
+      </div>
+      <div class="viz-caption">
+        Crime rates per 100,000 residents, 2001–2024. Source: Chicago Police Department Open Data Portal.
+      </div>
+    </div>
+
+    <!-- Budget Share Animated -->
+    <div class="viz-block">
+      <div class="viz-header">
+        <h3>How Budget Shares Shifted Over Time</h3>
+        <p>The city's spending priorities changed significantly across two decades. Police maintained the largest share throughout, while the relative weight of human services, housing, and infrastructure shifted year by year.</p>
+      </div>
+      <div class="viz-body">
+        <img src="assets/budget_share.gif" alt="Animated chart of Chicago budget shares by department 2001–2024"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div class="viz-placeholder" style="display:none;">
+          [ budget_share.gif — generated by analysis.R, place in assets/ ]
+        </div>
+      </div>
+      <div class="viz-caption">
+        Share of total city budget by department, 2001–2024. Inflation-adjusted to 2024 USD. Source: Chicago City Clerk Annual Appropriation Ordinances.
+      </div>
+    </div>
+
+    <!-- Per Capita Animated -->
+    <div class="viz-block">
+      <div class="viz-header">
+        <h3>Per Capita Spending by Department</h3>
+        <p>Expressed in inflation-adjusted dollars per resident, overall spending grew across most departments over the period — even as population declined and budget shares shifted.</p>
+      </div>
+      <div class="viz-body">
+        <img src="assets/per_capita.gif" alt="Animated chart of Chicago per capita spending by department 2001–2024"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div class="viz-placeholder" style="display:none;">
+          [ per_capita.gif — generated by analysis.R, place in assets/ ]
+        </div>
+      </div>
+      <div class="viz-caption">
+        Per capita city spending by department, 2001–2024. Inflation-adjusted to 2024 USD. Source: Chicago City Clerk Annual Appropriation Ordinances.
+      </div>
+    </div>
+
+    <!-- Heatmap -->
+    <div class="viz-block">
+      <div class="viz-header">
+        <h3>Which Budget Categories Are Most Associated with Crime?</h3>
+        <p>Standardized regression coefficients show the direction and relative strength of association between each budget share and each crime outcome, controlling for all other predictors. Red indicates a positive association (higher share, higher crime); blue indicates a negative association. Asterisks mark statistically significant relationships.</p>
+      </div>
+      <div class="viz-body">
+        <img src="assets/coef_heatmap.png" alt="Heatmap of standardized regression coefficients for budget shares and crime rates"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div class="viz-placeholder" style="display:none;">
+          [ coef_heatmap.png — export from R and place in assets/ ]
+        </div>
+      </div>
+      <div class="viz-caption">
+        Standardized (beta) coefficients from multivariate OLS regression. Reference category: Internal Operations & Infrastructure. * p &lt; 0.05. Interpret with caution — high multicollinearity (VIF = 9–16) among several predictors.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- METHODOLOGY -->
+<section class="method" id="methodology">
+  <div class="container">
+    <div class="section-label">Methodology</div>
+    <h2>How the Analysis Was Done</h2>
+    <p class="lead">A multi-step pipeline from raw public data to regression models, with careful attention to common pitfalls in budget-crime analysis.</p>
+    <div class="method-steps">
+      <div class="method-step">
+        <div class="step-num">Step 01</div>
+        <h4>Data Assembly</h4>
+        <p>Budget data from Chicago City Clerk records, crime incidents from the CPD Open Data Portal, population from the U.S. Census, and CPI from the BLS were assembled into a single annual panel.</p>
+      </div>
+      <div class="method-step">
+        <div class="step-num">Step 02</div>
+        <h4>Inflation Adjustment</h4>
+        <p>All dollar values were converted to constant 2024 USD using annual CPI averages, ensuring year-over-year budget comparisons are not distorted by inflation.</p>
+      </div>
+      <div class="method-step">
+        <div class="step-num">Step 03</div>
+        <h4>Crime Classification</h4>
+        <p>Incident-level crime records were classified using FBI UCR Index codes into violent, property, and non-index categories. Homicides were flagged separately as a reporting-bias robustness check.</p>
+      </div>
+      <div class="method-step">
+        <div class="step-num">Step 04</div>
+        <h4>Normalization</h4>
+        <p>Budget figures were expressed both as share of total city budget and as inflation-adjusted per capita spending. Crime counts were converted to rates per 100,000 residents.</p>
+      </div>
+      <div class="method-step">
+        <div class="step-num">Step 05</div>
+        <h4>Regression Modeling</h4>
+        <p>Bivariate OLS models (one predictor at a time) served as the primary analysis, chosen to avoid multicollinearity issues. Full multivariate models were run as a secondary robustness check.</p>
+      </div>
+      <div class="method-step">
+        <div class="step-num">Step 06</div>
+        <h4>Year Sensitivity Check</h4>
+        <p>All models were re-run with calendar year as a covariate to identify which budget-crime associations survive after accounting for the overall time trend in both variables.</p>
+      </div>
+    </div>
+    <div class="method-note">
+      Full methodology, including data cleaning decisions, interpolation approach, and regression diagnostics, is documented in the project repository.
+      <br /><br />
+      <a href="https://github.com/" target="_blank">→ View full methodology and code on GitHub</a>
+    </div>
+  </div>
+</section>
+
+<!-- DATA SOURCES -->
+<section class="sources" id="data">
+  <div class="container">
+    <div class="section-label">Data Sources</div>
+    <h2>Where the Data Comes From</h2>
+    <p class="lead">All data used in this analysis is publicly available.</p>
+    <div class="sources-list">
+      <div class="source-item">
+        <h4>Crime Data (2001–2024)</h4>
+        <p>Chicago Police Department via City of Chicago Open Data Portal. Incident-level records with IUCR crime classifications.</p>
+      </div>
+      <div class="source-item">
+        <h4>City Budget Data</h4>
+        <p>Chicago City Clerk Annual Appropriation Ordinances. Department-level allocations from 2001–2024.</p>
+      </div>
+      <div class="source-item">
+        <h4>CPS Budget Data</h4>
+        <p>Chicago Public Schools Annual Budget Reports. State funding as a share of total CPS revenue.</p>
+      </div>
+      <div class="source-item">
+        <h4>Population Data</h4>
+        <p>U.S. Census Bureau via tidycensus. Decennial counts, ACS 1-year estimates, and post-2020 Population Estimates Program data.</p>
+      </div>
+      <div class="source-item">
+        <h4>Inflation (CPI-U)</h4>
+        <p>U.S. Bureau of Labor Statistics. All Urban Consumers, U.S. City Average. Annual averages used for adjustment to 2024 USD.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a href="https://github.com/" target="_blank">GitHub Repository</a>
+    <a href="#findings">Key Findings</a>
+    <a href="#methodology">Methodology</a>
+  </div>
+  <p>Crime Rate Prediction using Chicago Budget Data · Analysis conducted in R · Data covers 2001–2024</p>
+</footer>
+
+</body>
+</html>
