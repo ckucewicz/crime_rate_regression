@@ -31,42 +31,47 @@
       line-height: 1.7;
     }
 
-    /* ── NAV ── */
+    /* NAV */
     nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      position: sticky; top: 0; z-index: 100;
       background: var(--navy);
       padding: 0 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       height: 56px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
     nav .brand {
-      color: var(--white);
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      text-decoration: none;
+      color: var(--white); font-size: 0.85rem; font-weight: 600;
+      letter-spacing: 0.04em; text-transform: uppercase; text-decoration: none;
     }
-    nav ul {
-      list-style: none;
-      display: flex;
-      gap: 2rem;
-    }
+    nav ul { list-style: none; display: flex; gap: 2rem; }
     nav ul a {
-      color: rgba(255,255,255,0.75);
-      text-decoration: none;
-      font-size: 0.85rem;
-      font-weight: 500;
-      transition: color 0.2s;
+      color: rgba(255,255,255,0.75); text-decoration: none;
+      font-size: 0.85rem; font-weight: 500; transition: color 0.2s;
     }
     nav ul a:hover { color: var(--white); }
+    .nav-portfolio {
+      color: rgba(255,255,255,0.6); text-decoration: none;
+      font-size: 0.78rem; font-weight: 500; letter-spacing: 0.04em;
+      text-transform: uppercase; transition: color 0.2s; white-space: nowrap;
+    }
+    .nav-portfolio:hover { color: var(--white); }
 
-    /* ── HERO ── */
+    /* HAMBURGER */
+    .hamburger {
+      display: none; flex-direction: column;
+      justify-content: center; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 4px;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: #fff; border-radius: 2px; transition: all 0.25s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* HERO */
     .hero {
       background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
       color: var(--white);
@@ -77,108 +82,116 @@
       display: inline-block;
       background: rgba(255,255,255,0.15);
       border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 20px;
-      padding: 0.3rem 1rem;
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 1.5rem;
+      border-radius: 20px; padding: 0.3rem 1rem;
+      font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1.5rem;
     }
     .hero h1 {
       font-family: 'Playfair Display', serif;
       font-size: clamp(2.2rem, 5vw, 3.8rem);
-      line-height: 1.15;
-      max-width: 800px;
+      line-height: 1.15; max-width: 800px;
       margin: 0 auto 1.5rem;
     }
     .hero p {
-      font-size: 1.15rem;
-      max-width: 620px;
+      font-size: 1.15rem; max-width: 620px;
       margin: 0 auto 2.5rem;
-      color: rgba(255,255,255,0.82);
-      font-weight: 300;
+      color: rgba(255,255,255,0.82); font-weight: 300;
     }
     .hero-meta {
-      display: flex;
-      justify-content: center;
-      gap: 2.5rem;
-      flex-wrap: wrap;
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.65);
+      display: flex; justify-content: center;
+      gap: 2.5rem; flex-wrap: wrap;
+      font-size: 0.85rem; color: rgba(255,255,255,0.65);
     }
     .hero-meta span strong {
-      display: block;
-      color: var(--white);
-      font-size: 1.1rem;
-      font-weight: 600;
+      display: block; color: var(--white);
+      font-size: 1.1rem; font-weight: 600;
     }
 
-    /* ── SECTIONS ── */
+    /* SECTIONS */
     section { padding: 5rem 2rem; }
     .container { max-width: 960px; margin: 0 auto; }
     .section-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.75rem;
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.75rem;
     }
     h2 {
       font-family: 'Playfair Display', serif;
       font-size: clamp(1.8rem, 3vw, 2.6rem);
-      color: var(--navy);
-      margin-bottom: 1.25rem;
-      line-height: 1.2;
+      color: var(--navy); margin-bottom: 1.25rem; line-height: 1.2;
     }
     .lead {
-      font-size: 1.1rem;
-      color: var(--muted);
-      max-width: 680px;
-      margin-bottom: 3rem;
-      font-weight: 300;
+      font-size: 1.1rem; color: var(--muted);
+      max-width: 680px; margin-bottom: 3rem; font-weight: 300;
     }
 
-    /* ── CONTEXT ── */
+    /* CONTEXT */
     .context { background: var(--off); }
     .context-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      margin-top: 2rem;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2rem; margin-top: 2rem;
     }
-    @media (max-width: 640px) { .context-grid { grid-template-columns: 1fr; } }
     .context-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.75rem;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.75rem;
     }
     .context-card h3 {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--navy);
+      font-size: 1rem; font-weight: 600;
+      color: var(--navy); margin-bottom: 0.6rem;
+    }
+    .context-card p { font-size: 0.92rem; color: var(--muted); line-height: 1.65; }
+
+    /* BUDGET CATEGORIES */
+    .budget-cats { background: var(--white); }
+    .budget-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1.25rem; margin-top: 0.5rem;
+    }
+    .budget-card {
+      background: var(--off); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.5rem;
+      border-left: 4px solid var(--accent);
+    }
+    .budget-card:nth-child(1) { border-left-color: #1a4a7a; }
+    .budget-card:nth-child(2) { border-left-color: #1e7e4a; }
+    .budget-card:nth-child(3) { border-left-color: #c0392b; }
+    .budget-card:nth-child(4) { border-left-color: #8e44ad; }
+    .budget-card:nth-child(5) { border-left-color: #d68910; }
+    .budget-card:nth-child(6) { border-left-color: #2f80c0; }
+    .budget-card:nth-child(7) { border-left-color: #16a085; }
+    .budget-card:nth-child(8) { border-left-color: #7f8c8d; }
+    .budget-card-header {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 1rem;
       margin-bottom: 0.6rem;
     }
-    .context-card p {
-      font-size: 0.92rem;
-      color: var(--muted);
-      line-height: 1.65;
+    .budget-card h3 {
+      font-size: 0.95rem; font-weight: 600;
+      color: var(--navy); line-height: 1.3;
+    }
+    .budget-badge {
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 100px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .badge-primary { background: #e8f2fb; color: #1a4a7a; }
+    .badge-proxy { background: #fdf3f2; color: #c0392b; }
+    .budget-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.65; margin-bottom: 0.5rem; }
+    .budget-card p:last-child { margin-bottom: 0; }
+    .budget-why {
+      font-size: 0.8rem; color: var(--accent);
+      font-weight: 500; font-style: italic;
     }
 
-    /* ── KEY FINDINGS ── */
-    .findings { background: var(--white); }
+    /* KEY FINDINGS */
+    .findings { background: var(--off); }
     .findings-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      margin-top: 0.5rem;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1.5rem; margin-top: 0.5rem;
     }
-    @media (max-width: 640px) { .findings-grid { grid-template-columns: 1fr; } }
     .finding-card {
-      border-radius: 10px;
-      padding: 1.75rem;
+      border-radius: 10px; padding: 1.75rem;
       border-left: 4px solid transparent;
     }
     .finding-card.neutral { background: var(--sky); border-color: var(--accent); }
@@ -186,181 +199,118 @@
     .finding-card.positive { background: #f0faf4; border-color: var(--green); }
     .finding-card.highlight { background: #fffbf0; border-color: #e0a020; }
     .finding-card .num {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.5rem;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 0.5rem;
     }
     .finding-card h3 {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--navy);
-      margin-bottom: 0.5rem;
-      line-height: 1.35;
+      font-size: 1rem; font-weight: 600;
+      color: var(--navy); margin-bottom: 0.5rem; line-height: 1.35;
     }
-    .finding-card p {
-      font-size: 0.9rem;
-      color: var(--muted);
-      line-height: 1.6;
-    }
+    .finding-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
 
-    /* ── VISUALIZATIONS ── */
-    .viz { background: var(--off); }
+    /* VISUALIZATIONS */
+    .viz { background: var(--white); }
     .viz-block {
-      margin-bottom: 4rem;
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
+      margin-bottom: 4rem; background: var(--white);
+      border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
     }
     .viz-block:last-child { margin-bottom: 0; }
-    .viz-header {
-      padding: 1.5rem 2rem 1.25rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .viz-header h3 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--navy);
-      margin-bottom: 0.35rem;
-    }
-    .viz-header p {
-      font-size: 0.88rem;
-      color: var(--muted);
-      line-height: 1.55;
-    }
-    .viz-body {
-      padding: 1.5rem 2rem;
-      text-align: center;
-      background: #fafbfc;
-    }
-    .viz-body img {
-      max-width: 100%;
-      border-radius: 6px;
-    }
+    .viz-header { padding: 1.5rem 2rem 1.25rem; border-bottom: 1px solid var(--border); }
+    .viz-header h3 { font-size: 1.1rem; font-weight: 600; color: var(--navy); margin-bottom: 0.35rem; }
+    .viz-header p { font-size: 0.88rem; color: var(--muted); line-height: 1.55; }
+    .viz-body { padding: 1.5rem 2rem; text-align: center; background: #fafbfc; }
+    .viz-body img { max-width: 100%; border-radius: 6px; }
     .viz-placeholder {
-      background: var(--border);
-      border-radius: 6px;
-      padding: 4rem 2rem;
-      color: var(--muted);
-      font-size: 0.88rem;
-      font-style: italic;
+      background: var(--border); border-radius: 6px;
+      padding: 4rem 2rem; color: var(--muted);
+      font-size: 0.88rem; font-style: italic;
     }
     .viz-caption {
-      padding: 1rem 2rem;
-      font-size: 0.82rem;
-      color: var(--muted);
-      border-top: 1px solid var(--border);
-      background: var(--white);
-      line-height: 1.55;
+      padding: 1rem 2rem; font-size: 0.82rem; color: var(--muted);
+      border-top: 1px solid var(--border); background: var(--white); line-height: 1.55;
     }
 
-    /* ── METHODOLOGY SUMMARY ── */
+    /* METHODOLOGY */
     .method { background: var(--navy); color: var(--white); }
     .method h2 { color: var(--white); }
     .method .lead { color: rgba(255,255,255,0.65); }
     .method-steps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2.5rem;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem; margin-top: 2.5rem;
     }
     .method-step {
       background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 10px;
-      padding: 1.5rem;
+      border-radius: 10px; padding: 1.5rem;
     }
     .method-step .step-num {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.5rem;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.5rem;
     }
-    .method-step h4 {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--white);
-      margin-bottom: 0.4rem;
-    }
-    .method-step p {
-      font-size: 0.83rem;
-      color: rgba(255,255,255,0.6);
-      line-height: 1.55;
-    }
+    .method-step h4 { font-size: 0.95rem; font-weight: 600; color: var(--white); margin-bottom: 0.4rem; }
+    .method-step p { font-size: 0.83rem; color: rgba(255,255,255,0.6); line-height: 1.55; }
     .method-note {
       margin-top: 2.5rem;
       background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 10px;
-      padding: 1.5rem 2rem;
-      font-size: 0.9rem;
-      color: rgba(255,255,255,0.7);
-      line-height: 1.65;
+      border-radius: 10px; padding: 1.5rem 2rem;
+      font-size: 0.9rem; color: rgba(255,255,255,0.7); line-height: 1.65;
     }
-    .method-note a {
-      color: #7ec8f0;
-      text-decoration: none;
-    }
+    .method-note a { color: #7ec8f0; text-decoration: none; }
     .method-note a:hover { text-decoration: underline; }
 
-    /* ── DATA SOURCES ── */
+    /* DATA SOURCES */
     .sources { background: var(--white); }
     .sources-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-      margin-top: 2rem;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem; margin-top: 2rem;
     }
     .source-item {
-      background: var(--off);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.25rem;
+      background: var(--off); border: 1px solid var(--border);
+      border-radius: 8px; padding: 1.25rem;
     }
-    .source-item h4 {
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--navy);
-      margin-bottom: 0.3rem;
-    }
-    .source-item p {
-      font-size: 0.8rem;
-      color: var(--muted);
-      line-height: 1.5;
-    }
+    .source-item h4 { font-size: 0.88rem; font-weight: 600; color: var(--navy); margin-bottom: 0.3rem; }
+    .source-item p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
 
-    /* ── FOOTER ── */
+    /* FOOTER */
     footer {
-      background: var(--navy);
-      color: rgba(255,255,255,0.5);
-      text-align: center;
-      padding: 2.5rem 2rem;
-      font-size: 0.83rem;
+      background: var(--navy); color: rgba(255,255,255,0.5);
+      text-align: center; padding: 2.5rem 2rem; font-size: 0.83rem;
     }
-    footer a {
-      color: rgba(255,255,255,0.75);
-      text-decoration: none;
-      font-weight: 500;
-    }
+    footer a { color: rgba(255,255,255,0.75); text-decoration: none; font-weight: 500; }
     footer a:hover { color: var(--white); }
     .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
+      display: flex; justify-content: center;
+      gap: 2rem; margin-bottom: 1rem; flex-wrap: wrap;
     }
 
-    /* ── DIVIDER ── */
-    hr.section-divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 3rem 0;
+    /* MOBILE */
+    @media (max-width: 768px) {
+      nav { padding: 0 1.25rem; }
+      nav ul {
+        display: none; flex-direction: column; gap: 0;
+        position: absolute; top: 56px; left: 0; right: 0;
+        background: var(--navy); padding: 0.5rem 0; z-index: 99;
+      }
+      nav ul.open { display: flex; }
+      nav ul li { width: 100%; }
+      nav ul a {
+        display: block; padding: 0.85rem 1.5rem;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        font-size: 0.9rem;
+      }
+      nav ul li:last-child a { border-bottom: none; }
+      .hamburger { display: flex; }
+      .nav-portfolio { display: none; }
+      .hero { padding: 4rem 1.25rem 3rem; }
+      .hero-meta { gap: 1.25rem; }
+      .context-grid, .budget-grid, .findings-grid { grid-template-columns: 1fr; }
+      section { padding: 3.5rem 1.25rem; }
+      .method-steps { grid-template-columns: 1fr; }
+      .sources-list { grid-template-columns: 1fr; }
+      .viz-header, .viz-body, .viz-caption { padding-left: 1.25rem; padding-right: 1.25rem; }
     }
   </style>
 </head>
@@ -369,19 +319,25 @@
 <!-- NAV -->
 <nav>
   <a class="brand" href="#">Chicago Crime & Budget</a>
-  <ul>
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul id="nav-links">
+    <li><a href="#context">Background</a></li>
+    <li><a href="#budget-categories">Budget Categories</a></li>
     <li><a href="#findings">Findings</a></li>
     <li><a href="#visualizations">Visualizations</a></li>
     <li><a href="#methodology">Methodology</a></li>
     <li><a href="#data">Data</a></li>
   </ul>
+  <a class="nav-portfolio" href="https://ckucewicz.github.io">← Portfolio</a>
 </nav>
 
 <!-- HERO -->
 <header class="hero">
   <div class="tag">Data Analysis · Chicago · 2001–2024</div>
   <h1>Does How Chicago Spends Its Budget Predict Crime?</h1>
-  <p>A regression analysis of city budget allocations and crime rates across two decades — and what the data actually shows.</p>
+  <p>A regression analysis of city budget allocations and crime rates across two decades, and what the data actually shows.</p>
   <div class="hero-meta">
     <span><strong>2001–2024</strong>Years of Data</span>
     <span><strong>8</strong>City Departments</span>
@@ -411,8 +367,92 @@
       </div>
       <div class="context-card">
         <h3>What This Project Can't Do</h3>
-        <p>Observational data over 24 years cannot establish causation. Budget decisions happen alongside economic shifts, demographic changes, and federal policy — all of which also influence crime.</p>
+        <p>Observational data over 24 years cannot establish causation. Budget decisions happen alongside economic shifts, demographic changes, and federal policy, all of which also influence crime.</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUDGET CATEGORIES -->
+<section class="budget-cats" id="budget-categories">
+  <div class="container">
+    <div class="section-label">Budget Categories</div>
+    <h2>The 8 Spending Categories in the Model</h2>
+    <p class="lead">Each category was chosen because it represents either a direct theory about crime prevention or a commonly cited alternative to policing. Here's what each includes and why it was included.</p>
+    <div class="budget-grid">
+
+      <div class="budget-card">
+        <div class="budget-card-header">
+          <h3>Police Department</h3>
+          <span class="budget-badge badge-primary">Direct Theory</span>
+        </div>
+        <p>The largest single line item in Chicago's budget. Covers sworn officers, civilian staff, equipment, and operations for the Chicago Police Department.</p>
+        <p class="budget-why">The central variable in the analysis. If increased policing deters crime, higher police spending share should correlate with lower crime rates.</p>
+      </div>
+
+      <div class="budget-card">
+        <div class="budget-card-header">
+          <h3>Human, Family & Youth Services</h3>
+          <span class="budget-badge badge-primary">Direct Theory</span>
+        </div>
+        <p>A consolidated category combining the Department of Human Services, Department of Family and Support Services, and child and youth services programs. Covers social safety net programs, youth intervention, domestic violence services, and more.</p>
+        <p class="budget-why">A direct test of the social investment hypothesis. If investing in support services addresses root causes of crime, higher spending here should associate with lower crime rates.</p>
+      </div>
+
+      <div class="budget-card">
+        <div class="budget-card-header">
+          <h3>Planning, Housing & Community Development</h3>
+          <span class="budget-badge badge-primary">Direct Theory</span>
+        </div>
+        <p>Combines the Department of Housing, Department of Planning and Development, and community development allocations. Covers affordable housing programs, neighborhood investment, and economic development initiatives.</p>
+        <p class="budget-why">Housing instability and concentrated poverty are well-established correlates of crime. Spending here tests whether investment in place-based stability associates with lower crime.</p>
+      </div>
+
+      <div class="budget-card">
+        <div class="budget-card-header">
+          <h3>Chicago Public Library</h3>
+          <span class="budget-badge badge-primary">Direct Theory</span>
+        </div>
+        <p>Covers library operations, programming, and facilities across Chicago's branch system. Libraries are often cited as community anchors that provide after-school programming, job resources, and safe public spaces.</p>
+        <p class="budget-why">Research has linked library access to reductions in youth crime. Included as a test of whether publicly accessible community infrastructure associates with safety outcomes.</p>
+      </div>
+
+      <div class="budget-card">
+        <div class="budget-card-header">
+          <h3>Streets & Sanitation</h3>
+          <span class="budget-badge badge-proxy">Environmental Proxy</span>
+        </div>
+        <p>Covers street cleaning, waste collection, alley maintenance, and rodent abatement. Often cited in broken windows theory, which argues that signs of physical disorder signal low social control and invite crime.</p>
+        <p class="budget-why">Included to test whether investment in the physical maintenance of neighborhoods associates with lower crime, separate from direct social or policing interventions.</p>
+      </div>
+
+      <div class="budget-card">
+        <div class="budget-card-header">
+          <h3>Transportation</h3>
+          <span class="budget-badge badge-proxy">Environmental Proxy</span>
+        </div>
+        <p>Covers the Chicago Department of Transportation's infrastructure work including street lighting, traffic signals, sidewalks, and road maintenance. Street lighting in particular has an established evidence base in crime prevention.</p>
+        <p class="budget-why">Included as a test of whether physical infrastructure investment, especially lighting and accessible streets, independently associates with crime outcomes.</p>
+      </div>
+
+      <div class="budget-card">
+        <div class="budget-card-header">
+          <h3>Internal Operations & Infrastructure</h3>
+          <span class="budget-badge badge-proxy">Control Variable</span>
+        </div>
+        <p>A consolidated category covering fleet and facilities management, asset and information services, architecture, construction, energy management, and environmental sustainability. Represents the city's internal administrative and operational infrastructure.</p>
+        <p class="budget-why">Included as the reference category in regression models. Spending here represents operational overhead rather than direct service delivery, providing a neutral baseline for comparison.</p>
+      </div>
+
+      <div class="budget-card">
+        <div class="budget-card-header">
+          <h3>CPS State Funding Share</h3>
+          <span class="budget-badge badge-primary">Direct Theory</span>
+        </div>
+        <p>The share of Chicago Public Schools' total revenue that comes from state sources. Unlike city budget categories, this captures school funding from outside Chicago's direct budget control. Includes state education aid and formula funding.</p>
+        <p class="budget-why">Education investment is one of the strongest long-term correlates of reduced crime. State funding share was used (rather than total CPS spending) to isolate funding that varies independently of local budget decisions.</p>
+      </div>
+
     </div>
   </div>
 </section>
@@ -422,33 +462,28 @@
   <div class="container">
     <div class="section-label">Key Findings</div>
     <h2>What the Data Shows</h2>
-    <p class="lead">Budget shares correlate with crime at first glance — but most of those correlations have a simpler explanation.</p>
+    <p class="lead">Budget shares correlate with crime at first glance, but most of those correlations have a simpler explanation.</p>
     <div class="findings-grid">
-
       <div class="finding-card neutral">
         <div class="num">Finding 01</div>
         <h3>Most correlations are driven by a shared time trend</h3>
-        <p>Crime in Chicago declined substantially from 2001 to 2024, and budget compositions shifted over the same period. When year is controlled for, most budget-crime correlations disappear — suggesting they reflect parallel trends, not independent relationships.</p>
+        <p>Crime in Chicago declined substantially from 2001 to 2024, and budget compositions shifted over the same period. When year is controlled for, most budget-crime correlations disappear, suggesting they reflect parallel trends, not independent relationships.</p>
       </div>
-
       <div class="finding-card caution">
         <div class="num">Finding 02</div>
         <h3>Police, human services, and library shares don't hold up</h3>
         <p>Despite high bivariate R² values (0.72–0.81), police funding share, human services share, and library share all lose statistical significance once the time trend is accounted for. The data does not support strong independent claims about any of these.</p>
       </div>
-
       <div class="finding-card positive">
         <div class="num">Finding 03</div>
         <h3>Two predictors survive year control</h3>
-        <p>Streets & Sanitation share and CPS state funding share retain statistically significant associations with crime after controlling for year — though both in positive directions that are difficult to interpret causally, and may reflect socioeconomic proxies rather than direct effects.</p>
+        <p>Streets & Sanitation share and CPS state funding share retain statistically significant associations with crime after controlling for year, though both in positive directions that are difficult to interpret causally and may reflect socioeconomic proxies rather than direct effects.</p>
       </div>
-
       <div class="finding-card highlight">
         <div class="num">Finding 04</div>
         <h3>Homicides are the hardest outcome to predict</h3>
-        <p>Homicide rates — the most reliably reported crime type and least susceptible to detection bias — show the weakest associations with budget variables across all model specifications. No budget predictor significantly predicts homicide rates after controlling for year.</p>
+        <p>Homicide rates, the most reliably reported crime type and least susceptible to detection bias, show the weakest associations with budget variables across all model specifications. No budget predictor significantly predicts homicide rates after controlling for year.</p>
       </div>
-
     </div>
   </div>
 </section>
@@ -460,7 +495,6 @@
     <h2>Exploring the Data</h2>
     <p class="lead">How crime rates and budget allocations have changed across two decades in Chicago.</p>
 
-    <!-- Crime Rate Trends -->
     <div class="viz-block">
       <div class="viz-header">
         <h3>Crime Rate Trends, 2001–2024</h3>
@@ -469,16 +503,11 @@
       <div class="viz-body">
         <img src="assets/crime_rate_trends.png" alt="Crime rate trends in Chicago 2001–2024"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-        <div class="viz-placeholder" style="display:none;">
-          [ crime_rate_trends.png — export from R and place in assets/ ]
-        </div>
+        <div class="viz-placeholder" style="display:none;">[ crime_rate_trends.png — export from R and place in assets/ ]</div>
       </div>
-      <div class="viz-caption">
-        Crime rates per 100,000 residents, 2001–2024. Source: Chicago Police Department Open Data Portal.
-      </div>
+      <div class="viz-caption">Crime rates per 100,000 residents, 2001–2024. Source: Chicago Police Department Open Data Portal.</div>
     </div>
 
-    <!-- Budget Share Animated -->
     <div class="viz-block">
       <div class="viz-header">
         <h3>How Budget Shares Shifted Over Time</h3>
@@ -487,34 +516,24 @@
       <div class="viz-body">
         <img src="assets/budget_share.gif" alt="Animated chart of Chicago budget shares by department 2001–2024"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-        <div class="viz-placeholder" style="display:none;">
-          [ budget_share.gif — generated by analysis.R, place in assets/ ]
-        </div>
+        <div class="viz-placeholder" style="display:none;">[ budget_share.gif — generated by analysis.R, place in assets/ ]</div>
       </div>
-      <div class="viz-caption">
-        Share of total city budget by department, 2001–2024. Inflation-adjusted to 2024 USD. Source: Chicago City Clerk Annual Appropriation Ordinances.
-      </div>
+      <div class="viz-caption">Share of total city budget by department, 2001–2024. Inflation-adjusted to 2024 USD. Source: Chicago City Clerk Annual Appropriation Ordinances.</div>
     </div>
 
-    <!-- Per Capita Animated -->
     <div class="viz-block">
       <div class="viz-header">
         <h3>Per Capita Spending by Department</h3>
-        <p>Expressed in inflation-adjusted dollars per resident, overall spending grew across most departments over the period — even as population declined and budget shares shifted.</p>
+        <p>Expressed in inflation-adjusted dollars per resident, overall spending grew across most departments over the period, even as population declined and budget shares shifted.</p>
       </div>
       <div class="viz-body">
         <img src="assets/per_capita.gif" alt="Animated chart of Chicago per capita spending by department 2001–2024"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-        <div class="viz-placeholder" style="display:none;">
-          [ per_capita.gif — generated by analysis.R, place in assets/ ]
-        </div>
+        <div class="viz-placeholder" style="display:none;">[ per_capita.gif — generated by analysis.R, place in assets/ ]</div>
       </div>
-      <div class="viz-caption">
-        Per capita city spending by department, 2001–2024. Inflation-adjusted to 2024 USD. Source: Chicago City Clerk Annual Appropriation Ordinances.
-      </div>
+      <div class="viz-caption">Per capita city spending by department, 2001–2024. Inflation-adjusted to 2024 USD. Source: Chicago City Clerk Annual Appropriation Ordinances.</div>
     </div>
 
-    <!-- Heatmap -->
     <div class="viz-block">
       <div class="viz-header">
         <h3>Which Budget Categories Are Most Associated with Crime?</h3>
@@ -523,15 +542,10 @@
       <div class="viz-body">
         <img src="assets/coef_heatmap.png" alt="Heatmap of standardized regression coefficients for budget shares and crime rates"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-        <div class="viz-placeholder" style="display:none;">
-          [ coef_heatmap.png — export from R and place in assets/ ]
-        </div>
+        <div class="viz-placeholder" style="display:none;">[ coef_heatmap.png — export from R and place in assets/ ]</div>
       </div>
-      <div class="viz-caption">
-        Standardized (beta) coefficients from multivariate OLS regression. Reference category: Internal Operations & Infrastructure. * p &lt; 0.05. Interpret with caution — high multicollinearity (VIF = 9–16) among several predictors.
-      </div>
+      <div class="viz-caption">Standardized (beta) coefficients from multivariate OLS regression. Reference category: Internal Operations & Infrastructure. * p &lt; 0.05. Interpret with caution — high multicollinearity (VIF = 9–16) among several predictors.</div>
     </div>
-
   </div>
 </section>
 
@@ -574,9 +588,8 @@
       </div>
     </div>
     <div class="method-note">
-      Full methodology, including data cleaning decisions, interpolation approach, and regression diagnostics, is documented in the project repository.
-      <br /><br />
-      <a href="https://github.com/" target="_blank">→ View full methodology and code on GitHub</a>
+      Full methodology, including data cleaning decisions, interpolation approach, and regression diagnostics, is documented in the project repository.<br /><br />
+      <a href="https://github.com/ckucewicz/crime_rate_regression" target="_blank">View full methodology and code on GitHub</a>
     </div>
   </div>
 </section>
@@ -615,12 +628,28 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-links">
-    <a href="https://github.com/" target="_blank">GitHub Repository</a>
+    <a href="https://ckucewicz.github.io">Portfolio</a>
+    <a href="https://github.com/ckucewicz/crime_rate_regression" target="_blank">GitHub Repository</a>
     <a href="#findings">Key Findings</a>
     <a href="#methodology">Methodology</a>
   </div>
   <p>Crime Rate Prediction using Chicago Budget Data · Analysis conducted in R · Data covers 2001–2024</p>
 </footer>
+
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('nav-links');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    navLinks.classList.toggle('open');
+  });
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      navLinks.classList.remove('open');
+    });
+  });
+</script>
 
 </body>
 </html>
