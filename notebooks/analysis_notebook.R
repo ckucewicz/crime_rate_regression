@@ -1,19 +1,16 @@
 # --- Analysis Notebook ---
-
 library(ggplot2)
-library(gganimate)
-library(gifski)
 library(tidyverse)
 library(corrplot)
 library(car)      # vif, durbinWatsonTest
 library(lmtest)   # bptest
+library(scales)
 
 # --- Step 1: Exploratory Data Analysis ---
 
 # 1.1 Visualizations of Variables
 
 # (A) unpivot groups
-
 df_long_pc <- model_data %>%
   select(year, ends_with("_pc")) %>%
   filter(year > 2002) %>%
@@ -27,7 +24,8 @@ df_long_share <- model_data %>%
   complete(year, category, fill = list(share = 0))
 
 viz_long <- model_data %>%
-  select(year, population, total_budget, rate_all_per_100k, rate_index_violent_per_100k, rate_index_property_per_100k, rate_homicide_all_per_100k) %>%
+  select(year, population, total_budget, rate_all_per_100k, rate_index_violent_per_100k,
+         rate_index_property_per_100k, rate_homicide_all_per_100k) %>%
   pivot_longer(-year, names_to = "series", values_to = "value")
 
 crime_rates_long <- model_data %>%
@@ -35,74 +33,159 @@ crime_rates_long <- model_data %>%
   filter(year > 2002) %>%
   pivot_longer(-year, names_to = "category", values_to = "rate")
 
-# line graph of population, budget, crime
+# Line graph of population, budget, crime
 ggplot(data = viz_long, aes(x = year, y = value)) +
   geom_line() +
-  facet_wrap(~series, scales = "free_y") 
+  facet_wrap(~series, scales = "free_y")
 
-# line graph of crime rate trends 2003-2024
+# Line graph of crime rate trends 2003-2024
 ggplot(data = crime_rates_long, aes(x = year, y = rate)) +
   geom_line() +
   facet_wrap(~category, scales = "free_y")
 
-# animated bar graph of pcs that adjusts by year
-p <- ggplot(
-  df_long_pc, 
-  aes(x = category, y = per_capita, fill = category, group = category)) +
-  geom_col(show.legend = FALSE) + 
-  labs(
-    title = "Year: {closest_state}", 
-    x = NULL, 
-    y = "Per Capita Spending"
-  ) + 
-  theme_minimal(base_size = 16) + 
-  theme(
-    axis.text.x = element_text(angle = 45, hjust = 1), 
-    plot.title = element_text(size = 24, hjust = 1, vjust = -1)
-  )
-
-anim <- p +
-  transition_states(year, transition_length = 0.2, state_length = 0.8)
-
-gif <- animate(
-  anim,
-  nframes = length(unique(df_long_pc$year)) *6,
-  fps = 6,
-  width = 900, height = 520,
-  renderer = gifski_renderer()
+# =========================
+# Shared color palette — matches the website
+# =========================
+dept_colors <- c(
+  "Police"                        = "#1a4a7a",
+  "Human & Family Services"       = "#1e7e4a",
+  "Streets & Sanitation"          = "#993c1d",
+  "Planning & Housing"            = "#534ab7",
+  "Library"                       = "#3b6d11",
+  "Transportation"                = "#ba7517",
+  "Internal Ops & Infrastructure" = "#888780"
 )
 
-anim_save("per_capita.gif", gif)
-
-# animated bar graph of shares that adjusts by year
-p <- ggplot(
-  df_long_share, 
-  aes(x = category, y = `share of budget`, fill = category, group = category)) +
-  geom_col(show.legend = FALSE) +
-  scale_y_continuous(labels = scales::percent_format()) + 
-  labs(
-    title = "Year: {closest_state}", 
-    x = NULL, 
-    y = "Share of Budget"
-  ) + 
-  theme_minimal(base_size = 16) + 
-  theme(
-    axis.text.x = element_text(angle = 45, hjust = 1), 
-    plot.title = element_text(size = 24, hjust = 1, vjust = -1)
-  )
-
-anim <- p +
-  transition_states(year, transition_length = 0.2, state_length = 0.8)
-
-gif <- animate(
-  anim,
-  nframes = length(unique(df_long_share$year)) *6,
-  fps = 6,
-  width = 900, height = 520,
-  renderer = gifski_renderer()
+# =========================
+# Stacked area chart: budget shares over time
+# Replaces animated bar chart
+# =========================
+share_labels <- c(
+  police_allocation_share                      = "Police",
+  streets_sanit_allocation_share               = "Streets & Sanitation",
+  transportation_allocation_share              = "Transportation",
+  planning_housing_commdev_allocation_share    = "Planning & Housing",
+  library_combined_allocation_share            = "Library",
+  human_family_youth_services_allocation_share = "Human & Family Services",
+  internal_ops_infrastructure_allocation_share = "Internal Ops & Infrastructure"
 )
 
-anim_save("budget_share.gif", gif)
+share_plot_data <- model_data %>%
+  select(year, ends_with("_share"), -cps_state_share) %>%
+  pivot_longer(-year, names_to = "category", values_to = "share") %>%
+  filter(!is.na(share)) %>%
+  mutate(
+    category_label = recode(category, !!!share_labels),
+    category_label = factor(category_label, levels = c(
+      "Internal Ops & Infrastructure",
+      "Transportation",
+      "Library",
+      "Planning & Housing",
+      "Streets & Sanitation",
+      "Human & Family Services",
+      "Police"
+    ))
+  )
+
+budget_share_plot <- ggplot(share_plot_data,
+    aes(x = year, y = share, fill = category_label)) +
+  geom_area(alpha = 0.88, color = "white", linewidth = 0.3) +
+  scale_fill_manual(values = dept_colors) +
+  scale_y_continuous(
+    labels = percent_format(accuracy = 1),
+    expand = c(0, 0)
+  ) +
+  scale_x_continuous(
+    breaks = seq(2001, 2024, by = 3),
+    expand = c(0, 0)
+  ) +
+  labs(
+    title    = "Chicago City Budget Composition, 2001–2024",
+    subtitle = "Share of total budget by department · Inflation-adjusted to 2024 USD",
+    x = NULL, y = "Share of Total Budget", fill = NULL,
+    caption  = "Source: Chicago City Clerk Annual Appropriation Ordinances"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    legend.position    = "bottom",
+    legend.key.size    = unit(0.45, "cm"),
+    legend.text        = element_text(size = 10),
+    plot.title         = element_text(face = "bold", size = 14),
+    plot.subtitle      = element_text(color = "gray40", size = 11),
+    plot.caption       = element_text(color = "gray50", size = 9),
+    panel.grid.minor   = element_blank(),
+    panel.grid.major.x = element_blank()
+  ) +
+  guides(fill = guide_legend(nrow = 2))
+
+dir.create("assets", showWarnings = FALSE)
+ggsave("assets/budget_share.png", budget_share_plot,
+       width = 11, height = 6.5, dpi = 150, bg = "white")
+
+# =========================
+# Line chart: per capita spending over time
+# Replaces animated bar chart
+# =========================
+pc_labels <- c(
+  police_allocation_pc                       = "Police",
+  streets_sanit_allocation_pc                = "Streets & Sanitation",
+  transportation_allocation_pc               = "Transportation",
+  planning_housing_commdev_allocation_pc     = "Planning & Housing",
+  library_combined_allocation_pc             = "Library",
+  human_family_youth_services_allocation_pc  = "Human & Family Services",
+  internal_ops_infrastructure_allocation_pc  = "Internal Ops & Infrastructure"
+)
+
+pc_plot_data <- model_data %>%
+  select(year, ends_with("_pc")) %>%
+  pivot_longer(-year, names_to = "category", values_to = "per_capita") %>%
+  filter(!is.na(per_capita)) %>%
+  mutate(category_label = recode(category, !!!pc_labels))
+
+pc_line_plot <- ggplot(pc_plot_data,
+    aes(x = year, y = per_capita, color = category_label, group = category_label)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 1.8) +
+  scale_color_manual(values = dept_colors) +
+  scale_y_continuous(labels = dollar_format(accuracy = 1)) +
+  scale_x_continuous(breaks = seq(2001, 2024, by = 3)) +
+  labs(
+    title    = "Per Capita City Spending by Department, 2001–2024",
+    subtitle = "Inflation-adjusted to 2024 USD",
+    x = NULL, y = "Per Capita Spending (2024 USD)", color = NULL,
+    caption  = "Source: Chicago City Clerk Annual Appropriation Ordinances"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    legend.position  = "bottom",
+    legend.key.size  = unit(0.45, "cm"),
+    legend.text      = element_text(size = 10),
+    plot.title       = element_text(face = "bold", size = 14),
+    plot.subtitle    = element_text(color = "gray40", size = 11),
+    plot.caption     = element_text(color = "gray50", size = 9),
+    panel.grid.minor = element_blank()
+  ) +
+  guides(color = guide_legend(nrow = 2))
+
+ggsave("assets/per_capita.png", pc_line_plot,
+       width = 11, height = 6.5, dpi = 150, bg = "white")
+
+# =========================
+# Save crime rate trends for GitHub Pages
+# =========================
+crime_trends_plot <- ggplot(crime_rates_long,
+    aes(x = year, y = rate, color = category)) +
+  geom_line(linewidth = 1) +
+  facet_wrap(~category, scales = "free_y") +
+  theme_minimal(base_size = 13) +
+  labs(
+    title = "Chicago Crime Rates per 100,000 Residents, 2003–2024",
+    x = NULL, y = "Rate per 100,000"
+  ) +
+  theme(legend.position = "none")
+
+ggsave("assets/crime_rate_trends.png", crime_trends_plot,
+       width = 11, height = 6, dpi = 150, bg = "white")
 
 # 1.2 Summary Statistics
 summary(model_data)
@@ -212,14 +295,14 @@ hist(residuals(prelim_model), breaks = 10,
 qqnorm(residuals(prelim_model), main = "Q-Q Plot of Residuals")
 qqline(residuals(prelim_model), col = "red")
 par(mfrow = c(1, 1))
-shapiro.test(residuals(prelim_model))  # W near 1 = normal; p > 0.05 = no evidence of non-normality
+shapiro.test(residuals(prelim_model))
 
 # 2.4 Homoscedasticity — residuals vs fitted
 plot(fitted(prelim_model), residuals(prelim_model),
      xlab = "Fitted Values", ylab = "Residuals",
      main = "Residuals vs Fitted (Homoscedasticity Check)")
 abline(h = 0, col = "red", lty = 2)
-bptest(prelim_model)  # Breusch-Pagan: p < 0.05 suggests heteroscedasticity
+bptest(prelim_model)
 
 # 2.5 Multicollinearity — Variance Inflation Factor
 # VIF > 5 is concerning; VIF > 10 is severe
