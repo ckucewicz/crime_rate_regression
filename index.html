@@ -7,7 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --navy:   #0f2340;
       --blue:   #1a4a7a;
@@ -21,16 +20,13 @@
       --red:    #c0392b;
       --green:  #1e7e4a;
     }
-
     html { scroll-behavior: smooth; }
-
     body {
       font-family: 'Inter', sans-serif;
       color: var(--text);
       background: var(--white);
       line-height: 1.7;
     }
-
     /* NAV */
     nav {
       position: sticky; top: 0; z-index: 100;
@@ -56,7 +52,6 @@
       text-transform: uppercase; transition: color 0.2s; white-space: nowrap;
     }
     .nav-portfolio:hover { color: var(--white); }
-
     /* HAMBURGER */
     .hamburger {
       display: none; flex-direction: column;
@@ -70,7 +65,6 @@
     .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
     .hamburger.open span:nth-child(2) { opacity: 0; }
     .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
     /* HERO */
     .hero {
       background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
@@ -106,7 +100,6 @@
       display: block; color: var(--white);
       font-size: 1.1rem; font-weight: 600;
     }
-
     /* SECTIONS */
     section { padding: 5rem 2rem; }
     .container { max-width: 960px; margin: 0 auto; }
@@ -124,7 +117,6 @@
       font-size: 1.1rem; color: var(--muted);
       max-width: 680px; margin-bottom: 3rem; font-weight: 300;
     }
-
     /* CONTEXT */
     .context { background: var(--off); }
     .context-grid {
@@ -140,7 +132,6 @@
       color: var(--navy); margin-bottom: 0.6rem;
     }
     .context-card p { font-size: 0.92rem; color: var(--muted); line-height: 1.65; }
-
     /* BUDGET CATEGORIES */
     .budget-cats { background: var(--white); }
     .budget-grid {
@@ -183,7 +174,6 @@
       font-size: 0.8rem; color: var(--accent);
       font-weight: 500; font-style: italic;
     }
-
     /* KEY FINDINGS */
     .findings { background: var(--off); }
     .findings-grid {
@@ -208,7 +198,6 @@
       color: var(--navy); margin-bottom: 0.5rem; line-height: 1.35;
     }
     .finding-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
-
     /* VISUALIZATIONS */
     .viz { background: var(--white); }
     .viz-block {
@@ -230,7 +219,6 @@
       padding: 1rem 2rem; font-size: 0.82rem; color: var(--muted);
       border-top: 1px solid var(--border); background: var(--white); line-height: 1.55;
     }
-
     /* METHODOLOGY */
     .method { background: var(--navy); color: var(--white); }
     .method h2 { color: var(--white); }
@@ -260,7 +248,6 @@
     }
     .method-note a { color: #7ec8f0; text-decoration: none; }
     .method-note a:hover { text-decoration: underline; }
-
     /* DATA SOURCES */
     .sources { background: var(--white); }
     .sources-list {
@@ -273,7 +260,6 @@
     }
     .source-item h4 { font-size: 0.88rem; font-weight: 600; color: var(--navy); margin-bottom: 0.3rem; }
     .source-item p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
-
     /* FOOTER */
     footer {
       background: var(--navy); color: rgba(255,255,255,0.5);
@@ -285,7 +271,6 @@
       display: flex; justify-content: center;
       gap: 2rem; margin-bottom: 1rem; flex-wrap: wrap;
     }
-
     /* MOBILE */
     @media (max-width: 768px) {
       nav { padding: 0 1.25rem; }
@@ -380,7 +365,6 @@
     <h2>The 8 Spending Categories in the Model</h2>
     <p class="lead">Each category was chosen because it represents either a direct theory about crime prevention or a commonly cited alternative to policing. Here's what each includes and why it was included.</p>
     <div class="budget-grid">
-
       <div class="budget-card">
         <div class="budget-card-header">
           <h3>Police Department</h3>
@@ -389,7 +373,6 @@
         <p>The largest single line item in Chicago's budget. Covers sworn officers, civilian staff, equipment, and operations for the Chicago Police Department.</p>
         <p class="budget-why">The central variable in the analysis. If increased policing deters crime, higher police spending share should correlate with lower crime rates.</p>
       </div>
-
       <div class="budget-card">
         <div class="budget-card-header">
           <h3>Human, Family & Youth Services</h3>
@@ -398,7 +381,6 @@
         <p>A consolidated category combining the Department of Human Services, Department of Family and Support Services, and child and youth services programs. Covers social safety net programs, youth intervention, domestic violence services, and more.</p>
         <p class="budget-why">A direct test of the social investment hypothesis. If investing in support services addresses root causes of crime, higher spending here should associate with lower crime rates.</p>
       </div>
-
       <div class="budget-card">
         <div class="budget-card-header">
           <h3>Planning, Housing & Community Development</h3>
@@ -407,7 +389,6 @@
         <p>Combines the Department of Housing, Department of Planning and Development, and community development allocations. Covers affordable housing programs, neighborhood investment, and economic development initiatives.</p>
         <p class="budget-why">Housing instability and concentrated poverty are well-established correlates of crime. Spending here tests whether investment in place-based stability associates with lower crime.</p>
       </div>
-
       <div class="budget-card">
         <div class="budget-card-header">
           <h3>Chicago Public Library</h3>
@@ -416,7 +397,6 @@
         <p>Covers library operations, programming, and facilities across Chicago's branch system. Libraries are often cited as community anchors that provide after-school programming, job resources, and safe public spaces.</p>
         <p class="budget-why">Research has linked library access to reductions in youth crime. Included as a test of whether publicly accessible community infrastructure associates with safety outcomes.</p>
       </div>
-
       <div class="budget-card">
         <div class="budget-card-header">
           <h3>Streets & Sanitation</h3>
@@ -425,7 +405,6 @@
         <p>Covers street cleaning, waste collection, alley maintenance, and rodent abatement. Often cited in broken windows theory, which argues that signs of physical disorder signal low social control and invite crime.</p>
         <p class="budget-why">Included to test whether investment in the physical maintenance of neighborhoods associates with lower crime, separate from direct social or policing interventions.</p>
       </div>
-
       <div class="budget-card">
         <div class="budget-card-header">
           <h3>Transportation</h3>
@@ -434,7 +413,6 @@
         <p>Covers the Chicago Department of Transportation's infrastructure work including street lighting, traffic signals, sidewalks, and road maintenance. Street lighting in particular has an established evidence base in crime prevention.</p>
         <p class="budget-why">Included as a test of whether physical infrastructure investment, especially lighting and accessible streets, independently associates with crime outcomes.</p>
       </div>
-
       <div class="budget-card">
         <div class="budget-card-header">
           <h3>Internal Operations & Infrastructure</h3>
@@ -443,7 +421,6 @@
         <p>A consolidated category covering fleet and facilities management, asset and information services, architecture, construction, energy management, and environmental sustainability. Represents the city's internal administrative and operational infrastructure.</p>
         <p class="budget-why">Included as the reference category in regression models. Spending here represents operational overhead rather than direct service delivery, providing a neutral baseline for comparison.</p>
       </div>
-
       <div class="budget-card">
         <div class="budget-card-header">
           <h3>CPS State Funding Share</h3>
@@ -452,7 +429,6 @@
         <p>The share of Chicago Public Schools' total revenue that comes from state sources. Unlike city budget categories, this captures school funding from outside Chicago's direct budget control. Includes state education aid and formula funding.</p>
         <p class="budget-why">Education investment is one of the strongest long-term correlates of reduced crime. State funding share was used (rather than total CPS spending) to isolate funding that varies independently of local budget decisions.</p>
       </div>
-
     </div>
   </div>
 </section>
@@ -514,9 +490,9 @@
         <p>The city's spending priorities changed significantly across two decades. Police maintained the largest share throughout, while the relative weight of human services, housing, and infrastructure shifted year by year.</p>
       </div>
       <div class="viz-body">
-        <img src="assets/budget_share.gif" alt="Animated chart of Chicago budget shares by department 2001–2024"
+        <img src="assets/budget_share.png" alt="Stacked area chart of Chicago budget shares by department 2001–2024"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-        <div class="viz-placeholder" style="display:none;">[ budget_share.gif — generated by analysis.R, place in assets/ ]</div>
+        <div class="viz-placeholder" style="display:none;">[ budget_share.png — export from R and place in assets/ ]</div>
       </div>
       <div class="viz-caption">Share of total city budget by department, 2001–2024. Inflation-adjusted to 2024 USD. Source: Chicago City Clerk Annual Appropriation Ordinances.</div>
     </div>
@@ -527,9 +503,9 @@
         <p>Expressed in inflation-adjusted dollars per resident, overall spending grew across most departments over the period, even as population declined and budget shares shifted.</p>
       </div>
       <div class="viz-body">
-        <img src="assets/per_capita.gif" alt="Animated chart of Chicago per capita spending by department 2001–2024"
+        <img src="assets/per_capita.png" alt="Line chart of Chicago per capita spending by department 2001–2024"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-        <div class="viz-placeholder" style="display:none;">[ per_capita.gif — generated by analysis.R, place in assets/ ]</div>
+        <div class="viz-placeholder" style="display:none;">[ per_capita.png — export from R and place in assets/ ]</div>
       </div>
       <div class="viz-caption">Per capita city spending by department, 2001–2024. Inflation-adjusted to 2024 USD. Source: Chicago City Clerk Annual Appropriation Ordinances.</div>
     </div>
@@ -546,6 +522,7 @@
       </div>
       <div class="viz-caption">Standardized (beta) coefficients from multivariate OLS regression. Reference category: Internal Operations & Infrastructure. * p &lt; 0.05. Interpret with caution — high multicollinearity (VIF = 9–16) among several predictors.</div>
     </div>
+
   </div>
 </section>
 
@@ -650,6 +627,5 @@
     });
   });
 </script>
-
 </body>
 </html>
