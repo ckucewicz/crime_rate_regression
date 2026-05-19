@@ -222,16 +222,17 @@ pc_interactive <- fig %>%
       orientation = "h",
       x           = 0,
       xanchor     = "left",
-      y           = 1.12,
-      yanchor     = "bottom",
-      font        = list(family = "Arial", size = 12, color = "#000000"),
+      y           = 1.02,
+      yanchor     = "top",
+      tracegroupgap = 5,
+      font        = list(family = "Arial", size = 11, color = "#000000"),
       bgcolor     = "rgba(0,0,0,0)",
       borderwidth = 0
     ),
     hovermode = "closest",
     plot_bgcolor  = "#ffffff",
     paper_bgcolor = "#ffffff",
-    margin = list(t = 120, b = 60, l = 60, r = 20),
+    margin = list(t = 160, b = 60, l = 60, r = 20),
     shapes = list(
       list(
         type    = "rect",
