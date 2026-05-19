@@ -103,12 +103,13 @@ budget_share_plot <- ggplot(share_plot_data,
   labs(
     title    = "Chicago City Budget Composition, 2001–2024",
     subtitle = "Share of total budget by department · Inflation-adjusted to 2024 USD",
-    x = NULL, y = "Share of Total Budget", fill = NULL,
+    x = NULL, y = NULL, fill = NULL,
     caption  = "Source: Chicago City Clerk Annual Appropriation Ordinances"
   ) +
   theme_minimal(base_size = 13) +
   theme(
-    legend.position    = "bottom",
+    legend.position    = "top",
+    legend.justification = "left",
     legend.key.size    = unit(0.45, "cm"),
     legend.text        = element_text(size = 10),
     plot.title         = element_text(face = "bold", size = 14),
@@ -207,23 +208,22 @@ pc_interactive <- fig %>%
       linewidth  = 1
     ),
     yaxis = list(
-      title      = list(text = "Per capita spending (2024 USD)",
-                        font = list(family = "Arial", size = 12, color = "#000000")),
+      title      = "",
       tickprefix = "$",
       tickformat = ",",
       tickfont   = list(family = "Arial", size = 12, color = "#000000"),
-      # Urban Institute: horizontal gridlines only, light gray
       showgrid   = TRUE,
       gridcolor  = "#e8e8e8",
       gridwidth  = 1,
       zeroline   = FALSE
     ),
-    # Urban Institute: horizontal legend below chart
+    # Legend at top, left-aligned
     legend = list(
       orientation = "h",
       x           = 0,
       xanchor     = "left",
-      y           = -0.18,
+      y           = 1.12,
+      yanchor     = "bottom",
       font        = list(family = "Arial", size = 12, color = "#000000"),
       bgcolor     = "rgba(0,0,0,0)",
       borderwidth = 0
@@ -231,14 +231,31 @@ pc_interactive <- fig %>%
     hovermode = "closest",
     plot_bgcolor  = "#ffffff",
     paper_bgcolor = "#ffffff",
-    margin = list(t = 90, b = 100, l = 70, r = 20),
-    # Urban Institute: source line, bottom right, small
+    margin = list(t = 120, b = 60, l = 60, r = 20),
+    shapes = list(
+      list(
+        type    = "rect",
+        xref    = "x", yref   = "paper",
+        x0      = 2019.5, x1  = 2021.5,
+        y0      = 0, y1       = 1,
+        fillcolor = "rgba(200,200,200,0.18)",
+        line    = list(width = 0)
+      )
+    ),
     annotations = list(
+      list(
+        text      = "COVID-19",
+        showarrow = FALSE,
+        xref      = "x", yref = "paper",
+        x         = 2020.5, y = 1.04,
+        xanchor   = "center",
+        font      = list(family = "Arial", size = 11, color = "#888888")
+      ),
       list(
         text      = "Source: Chicago City Clerk Annual Appropriation Ordinances",
         showarrow = FALSE,
         xref      = "paper", yref = "paper",
-        x         = 1, y = -0.28,
+        x         = 1, y = -0.12,
         xanchor   = "right",
         font      = list(family = "Arial", size = 11, color = "#5a6a7a")
       )
@@ -341,7 +358,6 @@ crime_trends_plot <- ggplot(crime_rates_long_clean,
 ggsave("assets/crime_rate_trends.png", crime_trends_plot,
        width = 11, height = 6, dpi = 150, bg = "white")
 
-       width = 10, height = 6.5, dpi = 150, bg = "white")
 
 
 # 1.2 Summary Statistics
