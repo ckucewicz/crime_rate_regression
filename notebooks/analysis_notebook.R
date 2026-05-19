@@ -215,7 +215,7 @@ pc_interactive <- fig %>%
       orientation   = "h",
       x             = 0,
       xanchor       = "left",
-      y             = 1.00,
+      y             = 1.020,
       yanchor       = "top",
       tracegroupgap = 5,
       font          = list(family = "Arial", size = 12, color = "#000000"),
@@ -242,7 +242,7 @@ pc_interactive <- fig %>%
         text      = "COVID-19",
         showarrow = FALSE,
         xref      = "x", yref = "paper",
-        x         = 2020.5, y = 0.93,
+        x         = 2020.5, y = 0.935,
         xanchor   = "center",
         font      = list(family = "Arial", size = 11, color = "#888888")
       ),
