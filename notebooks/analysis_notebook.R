@@ -126,8 +126,6 @@ ggsave("assets/budget_share.png", budget_share_plot,
 
 # =========================
 # Per capita spending — INTERACTIVE plotly version
-# Urban Institute style: Arial font, clean gridlines, bold title,
-# italic subtitle, horizontal legend, source annotation
 # =========================
 
 pc_labels <- c(
@@ -146,7 +144,6 @@ pc_plot_data <- model_data %>%
   filter(!is.na(per_capita)) %>%
   mutate(
     category_label = dplyr::recode(category, !!!pc_labels),
-    # Format tooltip
     tooltip_text = paste0(
       "<b>", dplyr::recode(category, !!!pc_labels), "</b><br>",
       "Year: ", year, "<br>",
@@ -154,7 +151,6 @@ pc_plot_data <- model_data %>%
     )
   )
 
-# Department display order (Police first so it draws on top)
 dept_order <- c(
   "Police",
   "Streets & Sanitation",
@@ -165,35 +161,33 @@ dept_order <- c(
   "Library"
 )
 
-# Build one trace per department for clean legend toggle behavior
 fig <- plot_ly()
 
 for (dept in dept_order) {
   dept_data <- pc_plot_data %>% filter(category_label == dept)
   fig <- fig %>%
     add_trace(
-      data       = dept_data,
-      x          = ~year,
-      y          = ~per_capita,
-      type       = "scatter",
-      mode       = "lines+markers",
-      name       = dept,
-      text       = ~tooltip_text,
-      hoverinfo  = "text",
-      line       = list(color = dept_colors[[dept]], width = 2.2),
-      marker     = list(color = dept_colors[[dept]], size = 5),
-      # highlight behavior: clicking legend item isolates that trace
+      data        = dept_data,
+      x           = ~year,
+      y           = ~per_capita,
+      type        = "scatter",
+      mode        = "lines+markers",
+      name        = dept,
+      text        = ~tooltip_text,
+      hoverinfo   = "text",
+      line        = list(color = dept_colors[[dept]], width = 2.2),
+      marker      = list(color = dept_colors[[dept]], size = 5),
       legendgroup = dept
     )
 }
 
 pc_interactive <- fig %>%
   layout(
-    # Urban Institute: bold title case title, italic sentence case subtitle
     title = list(
       text    = "<b>Per Capita City Spending by Department, 2001–2024</b><br><i style='font-size:13px;color:#5a6a7a'>Inflation-adjusted to 2024 USD · Click a department in the legend to show or hide it</i>",
-      font    = list(family = "Arial", size = 18, color = "#000000"),
-      x       = 0.025,
+      font    = list(family = "Arial", size = 20, color = "#000000"),
+      x       = 0.03,
+      y       = 0.83,
       xanchor = "left",
       pad     = list(l = 10)
     ),
@@ -217,30 +211,30 @@ pc_interactive <- fig %>%
       gridwidth  = 1,
       zeroline   = FALSE
     ),
-    # Legend at top, left-aligned
     legend = list(
-      orientation = "h",
-      x           = 0,
-      xanchor     = "left",
-      y           = 1.06,
-      yanchor     = "top",
+      orientation   = "h",
+      x             = 0,
+      xanchor       = "left",
+      y             = 1.00,
+      yanchor       = "top",
       tracegroupgap = 5,
-      font        = list(family = "Arial", size = 12, color = "#000000"),
-      bgcolor     = "rgba(0,0,0,0)",
-      borderwidth = 0
+      font          = list(family = "Arial", size = 12, color = "#000000"),
+      bgcolor       = "rgba(0,0,0,0)",
+      borderwidth   = 0
     ),
-    hovermode = "closest",
+    hovermode     = "closest",
     plot_bgcolor  = "#ffffff",
     paper_bgcolor = "#ffffff",
-    margin = list(t = 160, b = 60, l = 60, r = 20),
+    autosize      = TRUE,
+    margin        = list(t = 160, b = 60, l = 60, r = 20),
     shapes = list(
       list(
-        type    = "rect",
-        xref    = "x", yref   = "paper",
-        x0      = 2019.5, x1  = 2021.5,
-        y0      = 0, y1       = 1,
+        type      = "rect",
+        xref      = "x", yref = "paper",
+        x0        = 2019.5, x1 = 2021.5,
+        y0        = 0, y1    = 0.9,
         fillcolor = "rgba(200,200,200,0.18)",
-        line    = list(width = 0)
+        line      = list(width = 0)
       )
     ),
     annotations = list(
@@ -248,7 +242,7 @@ pc_interactive <- fig %>%
         text      = "COVID-19",
         showarrow = FALSE,
         xref      = "x", yref = "paper",
-        x         = 2020.5, y = 1.04,
+        x         = 2020.5, y = 0.93,
         xanchor   = "center",
         font      = list(family = "Arial", size = 11, color = "#888888")
       ),
@@ -263,14 +257,13 @@ pc_interactive <- fig %>%
     )
   ) %>%
   config(
-    displayModeBar  = TRUE,
+    displayModeBar         = TRUE,
     modeBarButtonsToRemove = c("select2d", "lasso2d", "autoScale2d",
                                "hoverClosestCartesian", "hoverCompareCartesian"),
-    displaylogo     = FALSE,
-    responsive      = TRUE
+    displaylogo            = FALSE,
+    responsive             = TRUE
   )
 
-# Save as self-contained HTML for GitHub Pages
 saveWidget(pc_interactive, "assets/per_capita_interactive.html",
            selfcontained = TRUE, title = "Per Capita City Spending by Department")
 
@@ -305,9 +298,6 @@ ggsave("assets/per_capita.png", pc_line_plot,
 
 # =========================
 # CLEANED CRIME RATE SMALL MULTIPLES
-# - Proper facet labels (no raw variable names)
-# - Single navy color
-# - Y-axis labeled "Rate per 100,000 residents"
 # =========================
 
 crime_rate_labels <- c(
@@ -346,20 +336,18 @@ crime_trends_plot <- ggplot(crime_rates_long_clean,
   ) +
   theme_minimal(base_size = 12) +
   theme(
-    plot.title       = element_text(face = "bold", size = 14),
-    plot.subtitle    = element_text(color = "gray40", size = 10),
-    plot.caption     = element_text(color = "gray50", size = 9),
-    strip.text       = element_text(face = "bold", size = 11, color = "#0f2340"),
-    panel.grid.minor = element_blank(),
+    plot.title         = element_text(face = "bold", size = 14),
+    plot.subtitle      = element_text(color = "gray40", size = 10),
+    plot.caption       = element_text(color = "gray50", size = 9),
+    strip.text         = element_text(face = "bold", size = 11, color = "#0f2340"),
+    panel.grid.minor   = element_blank(),
     panel.grid.major.x = element_blank(),
-    axis.text.x      = element_text(size = 9),
-    axis.text.y      = element_text(size = 9)
+    axis.text.x        = element_text(size = 9),
+    axis.text.y        = element_text(size = 9)
   )
 
 ggsave("assets/crime_rate_trends.png", crime_trends_plot,
        width = 11, height = 6, dpi = 150, bg = "white")
-
-
 
 # 1.2 Summary Statistics
 summary(model_data)
