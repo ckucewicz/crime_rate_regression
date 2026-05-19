@@ -187,9 +187,9 @@ pc_interactive <- fig %>%
       text    = "<b>Per Capita City Spending by Department, 2001–2024</b><br><i style='font-size:13px;color:#5a6a7a'>Inflation-adjusted to 2024 USD · Click a department in the legend to show or hide it</i>",
       font    = list(family = "Arial", size = 20, color = "#000000"),
       x       = 0.03,
-      y       = 0.83,
+      y       = 0.875,
       xanchor = "left",
-      pad     = list(l = 10)
+      pad     = list(l = 5)
     ),
     xaxis = list(
       title      = "",
@@ -215,7 +215,7 @@ pc_interactive <- fig %>%
       orientation   = "h",
       x             = 0,
       xanchor       = "left",
-      y             = 1.020,
+      y             = 1.05,
       yanchor       = "top",
       tracegroupgap = 5,
       font          = list(family = "Arial", size = 12, color = "#000000"),
@@ -225,8 +225,8 @@ pc_interactive <- fig %>%
     hovermode     = "closest",
     plot_bgcolor  = "#ffffff",
     paper_bgcolor = "#ffffff",
-    autosize      = TRUE,
-    margin        = list(t = 160, b = 60, l = 60, r = 20),
+    #autosize      = TRUE,
+    margin        = list(t = 150, b = 60, l = 60, r = 20),
     shapes = list(
       list(
         type      = "rect",
