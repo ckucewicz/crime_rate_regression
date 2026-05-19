@@ -5,6 +5,8 @@ library(corrplot)
 library(car)      # vif, durbinWatsonTest
 library(lmtest)   # bptest
 library(scales)
+library(plotly)
+library(htmlwidgets)
 
 # --- Step 1: Exploratory Data Analysis ---
 
@@ -57,8 +59,7 @@ dept_colors <- c(
 )
 
 # =========================
-# Stacked area chart: budget shares over time
-# Replaces animated bar chart
+# Stacked area chart: budget shares over time (static PNG — unchanged)
 # =========================
 share_labels <- c(
   police_allocation_share                      = "Police",
@@ -75,7 +76,7 @@ share_plot_data <- model_data %>%
   pivot_longer(-year, names_to = "category", values_to = "share") %>%
   filter(!is.na(share)) %>%
   mutate(
-    category_label = recode(category, !!!share_labels),
+    category_label = dplyr::recode(category, !!!share_labels),
     category_label = factor(category_label, levels = c(
       "Internal Ops & Infrastructure",
       "Transportation",
@@ -123,9 +124,11 @@ ggsave("assets/budget_share.png", budget_share_plot,
        width = 11, height = 6.5, dpi = 150, bg = "white")
 
 # =========================
-# Line chart: per capita spending over time
-# Replaces animated bar chart
+# Per capita spending — INTERACTIVE plotly version
+# Urban Institute style: Arial font, clean gridlines, bold title,
+# italic subtitle, horizontal legend, source annotation
 # =========================
+
 pc_labels <- c(
   police_allocation_pc                       = "Police",
   streets_sanit_allocation_pc                = "Streets & Sanitation",
@@ -140,8 +143,120 @@ pc_plot_data <- model_data %>%
   select(year, ends_with("_pc")) %>%
   pivot_longer(-year, names_to = "category", values_to = "per_capita") %>%
   filter(!is.na(per_capita)) %>%
-  mutate(category_label = recode(category, !!!pc_labels))
+  mutate(
+    category_label = dplyr::recode(category, !!!pc_labels),
+    # Format tooltip
+    tooltip_text = paste0(
+      "<b>", dplyr::recode(category, !!!pc_labels), "</b><br>",
+      "Year: ", year, "<br>",
+      "Per capita: $", formatC(per_capita, format = "f", digits = 0, big.mark = ",")
+    )
+  )
 
+# Department display order (Police first so it draws on top)
+dept_order <- c(
+  "Police",
+  "Streets & Sanitation",
+  "Internal Ops & Infrastructure",
+  "Human & Family Services",
+  "Transportation",
+  "Planning & Housing",
+  "Library"
+)
+
+# Build one trace per department for clean legend toggle behavior
+fig <- plot_ly()
+
+for (dept in dept_order) {
+  dept_data <- pc_plot_data %>% filter(category_label == dept)
+  fig <- fig %>%
+    add_trace(
+      data       = dept_data,
+      x          = ~year,
+      y          = ~per_capita,
+      type       = "scatter",
+      mode       = "lines+markers",
+      name       = dept,
+      text       = ~tooltip_text,
+      hoverinfo  = "text",
+      line       = list(color = dept_colors[[dept]], width = 2.2),
+      marker     = list(color = dept_colors[[dept]], size = 5),
+      # highlight behavior: clicking legend item isolates that trace
+      legendgroup = dept
+    )
+}
+
+pc_interactive <- fig %>%
+  layout(
+    # Urban Institute: bold title case title, italic sentence case subtitle
+    title = list(
+      text    = "<b>Per Capita City Spending by Department, 2001–2024</b><br><i style='font-size:13px;color:#5a6a7a'>Inflation-adjusted to 2024 USD · Click a department to isolate it; double-click to reset</i>",
+      font    = list(family = "Arial", size = 16, color = "#000000"),
+      x       = 0,
+      xanchor = "left",
+      pad     = list(l = 10)
+    ),
+    xaxis = list(
+      title      = "",
+      tickvals   = seq(2001, 2024, by = 3),
+      tickformat = "d",
+      tickfont   = list(family = "Arial", size = 12, color = "#000000"),
+      showgrid   = FALSE,
+      zeroline   = FALSE,
+      linecolor  = "#d0dce8",
+      linewidth  = 1
+    ),
+    yaxis = list(
+      title      = list(text = "Per capita spending (2024 USD)",
+                        font = list(family = "Arial", size = 12, color = "#000000")),
+      tickprefix = "$",
+      tickformat = ",",
+      tickfont   = list(family = "Arial", size = 12, color = "#000000"),
+      # Urban Institute: horizontal gridlines only, light gray
+      showgrid   = TRUE,
+      gridcolor  = "#e8e8e8",
+      gridwidth  = 1,
+      zeroline   = FALSE
+    ),
+    # Urban Institute: horizontal legend below chart
+    legend = list(
+      orientation = "h",
+      x           = 0,
+      xanchor     = "left",
+      y           = -0.18,
+      font        = list(family = "Arial", size = 12, color = "#000000"),
+      bgcolor     = "rgba(0,0,0,0)",
+      borderwidth = 0
+    ),
+    hovermode = "closest",
+    plot_bgcolor  = "#ffffff",
+    paper_bgcolor = "#ffffff",
+    margin = list(t = 90, b = 100, l = 70, r = 20),
+    # Urban Institute: source line, bottom right, small
+    annotations = list(
+      list(
+        text      = "Source: Chicago City Clerk Annual Appropriation Ordinances",
+        showarrow = FALSE,
+        xref      = "paper", yref = "paper",
+        x         = 1, y = -0.28,
+        xanchor   = "right",
+        font      = list(family = "Arial", size = 11, color = "#5a6a7a")
+      )
+    )
+  ) %>%
+  config(
+    displayModeBar  = TRUE,
+    modeBarButtonsToRemove = c("select2d", "lasso2d", "autoScale2d",
+                               "hoverClosestCartesian", "hoverCompareCartesian"),
+    displaylogo     = FALSE,
+    responsive      = TRUE
+  )
+
+# Save as self-contained HTML for GitHub Pages
+saveWidget(pc_interactive, "assets/per_capita_interactive.html",
+           selfcontained = TRUE, title = "Per Capita City Spending by Department")
+
+# Also keep the static PNG as fallback
 pc_line_plot <- ggplot(pc_plot_data,
     aes(x = year, y = per_capita, color = category_label, group = category_label)) +
   geom_line(linewidth = 1.2) +
@@ -171,21 +286,63 @@ ggsave("assets/per_capita.png", pc_line_plot,
        width = 11, height = 6.5, dpi = 150, bg = "white")
 
 # =========================
-# Save crime rate trends for GitHub Pages
+# CLEANED CRIME RATE SMALL MULTIPLES
+# - Proper facet labels (no raw variable names)
+# - Single navy color
+# - Y-axis labeled "Rate per 100,000 residents"
 # =========================
-crime_trends_plot <- ggplot(crime_rates_long,
-    aes(x = year, y = rate, color = category)) +
-  geom_line(linewidth = 1) +
-  facet_wrap(~category, scales = "free_y") +
-  theme_minimal(base_size = 13) +
+
+crime_rate_labels <- c(
+  rate_all_per_100k            = "All Crime",
+  rate_homicide_all_per_100k   = "Homicide (All)",
+  rate_homicide_index_per_100k = "Homicide (Index)",
+  rate_index_property_per_100k = "Index Property",
+  rate_index_violent_per_100k  = "Index Violent",
+  rate_nonindex_per_100k       = "Non-Index"
+)
+
+crime_rates_long_clean <- model_data %>%
+  select(year, starts_with("rate_")) %>%
+  filter(year > 2002) %>%
+  pivot_longer(-year, names_to = "category", values_to = "rate") %>%
+  mutate(
+    category_label = dplyr::recode(category, !!!crime_rate_labels),
+    category_label = factor(category_label, levels = c(
+      "All Crime", "Index Property", "Index Violent",
+      "Non-Index", "Homicide (All)", "Homicide (Index)"
+    ))
+  )
+
+crime_trends_plot <- ggplot(crime_rates_long_clean,
+    aes(x = year, y = rate)) +
+  geom_line(color = "#1a4a7a", linewidth = 1) +
+  geom_point(color = "#1a4a7a", size = 1.5) +
+  facet_wrap(~category_label, scales = "free_y", ncol = 3) +
+  scale_x_continuous(breaks = seq(2004, 2024, by = 5)) +
   labs(
-    title = "Chicago Crime Rates per 100,000 Residents, 2003–2024",
-    x = NULL, y = "Rate per 100,000"
+    title    = "Chicago Crime Rates per 100,000 Residents, 2003–2024",
+    subtitle = "Each panel uses its own y-axis scale",
+    x        = NULL,
+    y        = "Rate per 100,000 residents",
+    caption  = "Source: Chicago Police Department Open Data Portal"
   ) +
-  theme(legend.position = "none")
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title       = element_text(face = "bold", size = 14),
+    plot.subtitle    = element_text(color = "gray40", size = 10),
+    plot.caption     = element_text(color = "gray50", size = 9),
+    strip.text       = element_text(face = "bold", size = 11, color = "#0f2340"),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank(),
+    axis.text.x      = element_text(size = 9),
+    axis.text.y      = element_text(size = 9)
+  )
 
 ggsave("assets/crime_rate_trends.png", crime_trends_plot,
        width = 11, height = 6, dpi = 150, bg = "white")
+
+       width = 10, height = 6.5, dpi = 150, bg = "white")
+
 
 # 1.2 Summary Statistics
 summary(model_data)
@@ -193,11 +350,6 @@ summary(model_data)
 # =========================================================
 # 1.3 Correlation Analysis
 # =========================================================
-
-# Define predictor sets consistently across both notebooks.
-# internal_ops_infrastructure_allocation_share is the omitted reference category —
-# it is dropped from share models to avoid perfect multicollinearity (shares sum to 1).
-# It is KEPT in per-capita models because that constraint doesn't apply there.
 
 share_predictors <- c(
   "police_allocation_share",
@@ -207,7 +359,6 @@ share_predictors <- c(
   "library_combined_allocation_share",
   "human_family_youth_services_allocation_share",
   "cps_state_share"
-  # internal_ops_infrastructure_allocation_share omitted as reference
 )
 
 pc_predictors <- c(
@@ -218,7 +369,7 @@ pc_predictors <- c(
   "library_combined_allocation_pc",
   "human_family_youth_services_allocation_pc",
   "internal_ops_infrastructure_allocation_pc",
-  "cps_state_share"  # no pc version exists; include as-is in both specs
+  "cps_state_share"
 )
 
 crime_outcomes <- c(
@@ -264,7 +415,6 @@ corrplot(cor_pc, type = "upper", order = "hclust", tl.col = "black", tl.srt = 45
 
 # =========================================================
 # Step 2: Testing Linear Regression Assumptions
-# (Uses a preliminary full-share model on all-crime rate)
 # =========================================================
 
 prelim_data <- model_data %>%
@@ -273,7 +423,7 @@ prelim_data <- model_data %>%
 
 prelim_model <- lm(rate_all_per_100k ~ ., data = prelim_data)
 
-# 2.1 Linearity — scatter of each predictor vs outcome with fitted line
+# 2.1 Linearity
 prelim_data %>%
   pivot_longer(-rate_all_per_100k, names_to = "predictor", values_to = "value") %>%
   ggplot(aes(x = value, y = rate_all_per_100k)) +
@@ -284,8 +434,7 @@ prelim_data %>%
        x = "Predictor Value", y = "Crime Rate per 100k") +
   theme_minimal()
 
-# 2.2 Independence — Durbin-Watson test for autocorrelation
-# DW ~ 2 means no autocorrelation; < 2 is positive autocorrelation (common in time series)
+# 2.2 Independence
 durbinWatsonTest(prelim_model)
 
 # 2.3 Normality of residuals
@@ -297,13 +446,12 @@ qqline(residuals(prelim_model), col = "red")
 par(mfrow = c(1, 1))
 shapiro.test(residuals(prelim_model))
 
-# 2.4 Homoscedasticity — residuals vs fitted
+# 2.4 Homoscedasticity
 plot(fitted(prelim_model), residuals(prelim_model),
      xlab = "Fitted Values", ylab = "Residuals",
      main = "Residuals vs Fitted (Homoscedasticity Check)")
 abline(h = 0, col = "red", lty = 2)
 bptest(prelim_model)
 
-# 2.5 Multicollinearity — Variance Inflation Factor
-# VIF > 5 is concerning; VIF > 10 is severe
+# 2.5 Multicollinearity
 vif(prelim_model)

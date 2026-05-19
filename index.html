@@ -297,6 +297,36 @@
       .sources-list { grid-template-columns: 1fr; }
       .viz-header, .viz-body, .viz-caption { padding-left: 1.25rem; padding-right: 1.25rem; }
     }
+
+    /* THE DATA SECTION */
+    .the-data { background: var(--white); }
+    .data-block {
+      margin-bottom: 3rem;
+      border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+      background: var(--white);
+    }
+    .data-block:last-child { margin-bottom: 0; }
+    .data-block-header { padding: 1.25rem 2rem; border-bottom: 1px solid var(--border); }
+    .data-block-header h3 { font-size: 1rem; font-weight: 600; color: var(--navy); margin-bottom: 0.25rem; }
+    .data-block-header p { font-size: 0.85rem; color: var(--muted); line-height: 1.55; }
+    .data-block-body { padding: 1.5rem 2rem; background: #fafbfc; text-align: center; }
+    .data-block-body img { max-width: 100%; border-radius: 6px; }
+    .data-block-caption { padding: 0.85rem 2rem; font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--border); background: var(--white); }
+
+    /* FINDING WITH CHART */
+    .finding-with-chart { margin-bottom: 2.5rem; }
+    .finding-with-chart:last-child { margin-bottom: 0; }
+    .finding-with-chart .finding-card { border-radius: 10px 10px 0 0; margin-bottom: 0; }
+    .finding-chart-body { border: 1px solid var(--border); border-top: none; border-radius: 0 0 10px 10px; overflow: hidden; background: #fafbfc; text-align: center; padding: 1.5rem 2rem; }
+    .finding-chart-body img { max-width: 100%; border-radius: 6px; }
+    .finding-chart-caption { padding: 0.85rem 2rem; font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--border); background: var(--white); border-radius: 0 0 10px 10px; }
+    .finding-cards-only { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+    @media (max-width: 768px) {
+      .finding-cards-only { grid-template-columns: 1fr; }
+      .data-block-header, .data-block-body, .data-block-caption { padding-left: 1.25rem; padding-right: 1.25rem; }
+      .finding-chart-body, .finding-chart-caption { padding-left: 1.25rem; padding-right: 1.25rem; }
+    }
   </style>
 </head>
 <body>
@@ -310,8 +340,8 @@
   <ul id="nav-links">
     <li><a href="#context">Background</a></li>
     <li><a href="#budget-categories">Budget Categories</a></li>
+    <li><a href="#the-data">The Data</a></li>
     <li><a href="#findings">Findings</a></li>
-    <li><a href="#visualizations">Visualizations</a></li>
     <li><a href="#methodology">Methodology</a></li>
     <li><a href="#data">Data</a></li>
   </ul>
@@ -433,94 +463,97 @@
   </div>
 </section>
 
+<!-- THE DATA -->
+<section class="the-data" id="the-data">
+  <div class="container">
+    <div class="section-label">The Data</div>
+    <h2>How Chicago Spent Its Budget</h2>
+    <p class="lead">Before examining what the data shows, here is how the city's spending has looked across two decades — both as shares of the total budget and in inflation-adjusted dollars per resident.</p>
+
+    <div class="data-block">
+      <div class="data-block-header">
+        <h3>Budget Composition, 2001–2024</h3>
+        <p>Police has consistently held the largest share of Chicago's budget, though its relative weight has shifted over time alongside other departments.</p>
+      </div>
+      <div class="data-block-body">
+        <img src="assets/budget_share.png" alt="Stacked area chart of Chicago budget shares by department 2001–2024"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div class="viz-placeholder" style="display:none;">[ budget_share.png — export from R and place in assets/ ]</div>
+      </div>
+      <div class="data-block-caption">Share of total city budget by department, 2001–2024. Inflation-adjusted to 2024 USD. Source: Chicago City Clerk Annual Appropriation Ordinances.</div>
+    </div>
+
+    <div class="data-block">
+      <div class="data-block-header">
+        <h3>Per Capita Spending by Department, 2001–2024</h3>
+        <p>In inflation-adjusted dollars per resident, police spending far exceeds all other departments and has grown steadily. Click any department in the legend to isolate it.</p>
+      </div>
+      <div class="data-block-body" style="padding:0;">
+        <iframe
+          src="assets/per_capita_interactive.html"
+          width="100%"
+          height="520"
+          frameborder="0"
+          scrolling="no"
+          title="Per capita city spending by department, 2001–2024"
+          style="display:block; border:none;">
+        </iframe>
+      </div>
+      <div class="data-block-caption">Per capita city spending by department, 2001–2024. Inflation-adjusted to 2024 USD. Source: Chicago City Clerk Annual Appropriation Ordinances.</div>
+    </div>
+
+  </div>
+</section>
+
 <!-- KEY FINDINGS -->
 <section class="findings" id="findings">
   <div class="container">
     <div class="section-label">Key Findings</div>
     <h2>What the Data Shows</h2>
     <p class="lead">Budget shares correlate with crime at first glance, but most of those correlations have a simpler explanation.</p>
-    <div class="findings-grid">
-      <div class="finding-card neutral">
+
+    <!-- Finding 01 with crime rate chart -->
+    <div class="finding-with-chart" style="margin-top:2rem;">
+      <div class="finding-card neutral" style="border-radius:10px 10px 0 0;">
         <div class="num">Finding 01</div>
         <h3>Most correlations are driven by a shared time trend</h3>
         <p>Crime in Chicago declined substantially from 2001 to 2024, and budget compositions shifted over the same period. When year is controlled for, most budget-crime correlations disappear, suggesting they reflect parallel trends, not independent relationships.</p>
       </div>
-      <div class="finding-card caution">
+      <div class="finding-chart-body">
+        <img src="assets/crime_rate_trends.png" alt="Chicago crime rates per 100,000 residents by category, 2001–2024"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div class="viz-placeholder" style="display:none;">[ crime_rate_trends.png — export from R and place in assets/ ]</div>
+      </div>
+      <div class="finding-chart-caption">Chicago crime rates per 100,000 residents, 2001–2024. All major crime categories declined over the period, with homicide following a distinct trajectory. Source: Chicago Police Department Open Data Portal.</div>
+    </div>
+
+    <!-- Finding 02 with coefficient heatmap -->
+    <div class="finding-with-chart">
+      <div class="finding-card caution" style="border-radius:10px 10px 0 0;">
         <div class="num">Finding 02</div>
         <h3>Police, human services, and library shares don't hold up</h3>
         <p>Despite high bivariate R² values (0.72–0.81), police funding share, human services share, and library share all lose statistical significance once the time trend is accounted for. The data does not support strong independent claims about any of these.</p>
       </div>
+      <div class="finding-chart-body">
+        <img src="assets/coef_heatmap.png" alt="Heatmap of standardized regression coefficients for budget shares and crime rates"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div class="viz-placeholder" style="display:none;">[ coef_heatmap.png — export from R and place in assets/ ]</div>
+      </div>
+      <div class="finding-chart-caption">Standardized (beta) coefficients from multivariate OLS regression of budget shares on crime rates. Reference category: Internal Operations &amp; Infrastructure. * p &lt; 0.05. Interpret with caution — high multicollinearity (VIF = 9–16) among several predictors.</div>
+    </div>
+
+    <!-- Findings 03 and 04 — text only, side by side -->
+    <div class="finding-cards-only">
       <div class="finding-card positive">
         <div class="num">Finding 03</div>
         <h3>Two predictors survive year control</h3>
-        <p>Streets & Sanitation share and CPS state funding share retain statistically significant associations with crime after controlling for year, though both in positive directions that are difficult to interpret causally and may reflect socioeconomic proxies rather than direct effects.</p>
+        <p>Streets &amp; Sanitation share and CPS state funding share retain statistically significant associations with crime after controlling for year, though both in positive directions that are difficult to interpret causally and may reflect socioeconomic proxies rather than direct effects.</p>
       </div>
       <div class="finding-card highlight">
         <div class="num">Finding 04</div>
         <h3>Homicides are the hardest outcome to predict</h3>
         <p>Homicide rates, the most reliably reported crime type and least susceptible to detection bias, show the weakest associations with budget variables across all model specifications. No budget predictor significantly predicts homicide rates after controlling for year.</p>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- VISUALIZATIONS -->
-<section class="viz" id="visualizations">
-  <div class="container">
-    <div class="section-label">Visualizations</div>
-    <h2>Exploring the Data</h2>
-    <p class="lead">How crime rates and budget allocations have changed across two decades in Chicago.</p>
-
-    <div class="viz-block">
-      <div class="viz-header">
-        <h3>Crime Rate Trends, 2001–2024</h3>
-        <p>All crime types declined substantially over the study period, with the steepest drops in property and non-index crime. Homicide rates followed a different trajectory, rising sharply around 2016 before declining again.</p>
-      </div>
-      <div class="viz-body">
-        <img src="assets/crime_rate_trends.png" alt="Crime rate trends in Chicago 2001–2024"
-             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-        <div class="viz-placeholder" style="display:none;">[ crime_rate_trends.png — export from R and place in assets/ ]</div>
-      </div>
-      <div class="viz-caption">Crime rates per 100,000 residents, 2001–2024. Source: Chicago Police Department Open Data Portal.</div>
-    </div>
-
-    <div class="viz-block">
-      <div class="viz-header">
-        <h3>How Budget Shares Shifted Over Time</h3>
-        <p>The city's spending priorities changed significantly across two decades. Police maintained the largest share throughout, while the relative weight of human services, housing, and infrastructure shifted year by year.</p>
-      </div>
-      <div class="viz-body">
-        <img src="assets/budget_share.png" alt="Stacked area chart of Chicago budget shares by department 2001–2024"
-             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-        <div class="viz-placeholder" style="display:none;">[ budget_share.png — export from R and place in assets/ ]</div>
-      </div>
-      <div class="viz-caption">Share of total city budget by department, 2001–2024. Inflation-adjusted to 2024 USD. Source: Chicago City Clerk Annual Appropriation Ordinances.</div>
-    </div>
-
-    <div class="viz-block">
-      <div class="viz-header">
-        <h3>Per Capita Spending by Department</h3>
-        <p>Expressed in inflation-adjusted dollars per resident, overall spending grew across most departments over the period, even as population declined and budget shares shifted.</p>
-      </div>
-      <div class="viz-body">
-        <img src="assets/per_capita.png" alt="Line chart of Chicago per capita spending by department 2001–2024"
-             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-        <div class="viz-placeholder" style="display:none;">[ per_capita.png — export from R and place in assets/ ]</div>
-      </div>
-      <div class="viz-caption">Per capita city spending by department, 2001–2024. Inflation-adjusted to 2024 USD. Source: Chicago City Clerk Annual Appropriation Ordinances.</div>
-    </div>
-
-    <div class="viz-block">
-      <div class="viz-header">
-        <h3>Which Budget Categories Are Most Associated with Crime?</h3>
-        <p>Standardized regression coefficients show the direction and relative strength of association between each budget share and each crime outcome, controlling for all other predictors. Red indicates a positive association (higher share, higher crime); blue indicates a negative association. Asterisks mark statistically significant relationships.</p>
-      </div>
-      <div class="viz-body">
-        <img src="assets/coef_heatmap.png" alt="Heatmap of standardized regression coefficients for budget shares and crime rates"
-             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-        <div class="viz-placeholder" style="display:none;">[ coef_heatmap.png — export from R and place in assets/ ]</div>
-      </div>
-      <div class="viz-caption">Standardized (beta) coefficients from multivariate OLS regression. Reference category: Internal Operations & Infrastructure. * p &lt; 0.05. Interpret with caution — high multicollinearity (VIF = 9–16) among several predictors.</div>
     </div>
 
   </div>

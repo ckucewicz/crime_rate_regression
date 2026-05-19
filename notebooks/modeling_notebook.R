@@ -5,14 +5,10 @@
 library(tidyverse)
 library(broom)      # tidy(), glance()
 library(car)        # vif
-library(lmtest)     # bptest (used in analysis notebook; loaded here for completeness)
+library(lmtest)     # bptest
 
 # =========================================================
 # Setup: predictor sets and outcomes
-# Mirror definitions from analysis notebook.
-# NOTE: internal_ops_infrastructure_allocation_share is omitted from share_predictors
-# as the reference category to avoid perfect multicollinearity (shares sum to 1).
-# It IS included in pc_predictors because that constraint doesn't apply there.
 # =========================================================
 
 share_predictors <- c(
@@ -56,18 +52,16 @@ outcome_labels <- c(
 
 # =========================================================
 # Helper: fit OLS and return tidy results
-# Note: Newey-West SEs not needed — Durbin-Watson test (DW = 1.79, p = 0.13)
-# showed no significant autocorrelation, so standard OLS inference is valid.
 # =========================================================
 
 fit_ols <- function(outcome, predictors, data, spec_label) {
   df <- data %>%
     select(all_of(c(outcome, predictors))) %>%
     filter(complete.cases(.))
-  
+
   formula <- as.formula(paste(outcome, "~", paste(predictors, collapse = " + ")))
   model   <- lm(formula, data = df)
-  
+
   list(
     model   = model,
     spec    = spec_label,
@@ -79,9 +73,6 @@ fit_ols <- function(outcome, predictors, data, spec_label) {
 
 # =========================================================
 # Step 1A: Bivariate models — PRIMARY analysis
-# One predictor at a time; avoids multicollinearity entirely.
-# Preferred given high VIFs (15.8, 10.0, 9.2) in the full model
-# and the small sample size (n ≈ 24).
 # =========================================================
 
 bivariate_share <- map_dfr(share_predictors, function(pred) {
@@ -89,17 +80,17 @@ bivariate_share <- map_dfr(share_predictors, function(pred) {
     df <- model_data %>%
       select(all_of(c(outcome, pred))) %>%
       filter(complete.cases(.))
-    
+
     model <- lm(as.formula(paste(outcome, "~", pred)), data = df)
-    
+
     tidy(model) %>%
       filter(term != "(Intercept)") %>%
       mutate(
-        outcome   = outcome,
-        predictor = pred,
-        r_squared = summary(model)$r.squared,
+        outcome       = outcome,
+        predictor     = pred,
+        r_squared     = summary(model)$r.squared,
         adj_r_squared = summary(model)$adj.r.squared,
-        spec      = "share"
+        spec          = "share"
       )
   })
 })
@@ -109,9 +100,9 @@ bivariate_pc <- map_dfr(pc_predictors, function(pred) {
     df <- model_data %>%
       select(all_of(c(outcome, pred))) %>%
       filter(complete.cases(.))
-    
+
     model <- lm(as.formula(paste(outcome, "~", pred)), data = df)
-    
+
     tidy(model) %>%
       filter(term != "(Intercept)") %>%
       mutate(
@@ -125,29 +116,24 @@ bivariate_pc <- map_dfr(pc_predictors, function(pred) {
 })
 
 # --- View bivariate results ---
-
-# All share results sorted by R-squared
 bivariate_share %>%
   select(predictor, outcome, estimate, std.error, statistic, p.value, r_squared) %>%
   mutate(across(where(is.numeric), ~ round(.x, 3))) %>%
   arrange(desc(r_squared)) %>%
   print(n = Inf)
 
-# All per-capita results sorted by R-squared
 bivariate_pc %>%
   select(predictor, outcome, estimate, std.error, statistic, p.value, r_squared) %>%
   mutate(across(where(is.numeric), ~ round(.x, 3))) %>%
   arrange(desc(r_squared)) %>%
   print(n = Inf)
 
-# Significant results only (p < 0.05), shares
 bivariate_share %>%
   filter(p.value < 0.05) %>%
   select(predictor, outcome, estimate, p.value, r_squared) %>%
   mutate(across(where(is.numeric), ~ round(.x, 3))) %>%
   arrange(desc(r_squared))
 
-# Significant results only (p < 0.05), per capita
 bivariate_pc %>%
   filter(p.value < 0.05) %>%
   select(predictor, outcome, estimate, p.value, r_squared) %>%
@@ -155,19 +141,15 @@ bivariate_pc %>%
   arrange(desc(r_squared))
 
 # =========================================================
-# Step 1B: Full multivariate models — SECONDARY / robustness check
-# Interpret with caution: VIF flags police, library, and
-# human services shares as severely collinear in the share spec.
+# Step 1B: Full multivariate models — SECONDARY / robustness
 # =========================================================
 
-# --- 1.1 Share of budget models ---
 share_models <- map(
   crime_outcomes,
   ~ fit_ols(.x, share_predictors, model_data, "share")
 )
 names(share_models) <- crime_outcomes
 
-# --- 1.2 Per capita models ---
 pc_models <- map(
   crime_outcomes,
   ~ fit_ols(.x, pc_predictors, model_data, "per_capita")
@@ -178,8 +160,7 @@ names(pc_models) <- crime_outcomes
 # Step 2: Model Evaluation
 # =========================================================
 
-# --- 2.1 Goodness-of-fit summary table (multivariate) ---
-
+# --- 2.1 Goodness-of-fit summary ---
 gof_table <- bind_rows(
   map_dfr(share_models, ~ .x$glance %>% mutate(outcome = .x$outcome, spec = "share")),
   map_dfr(pc_models,    ~ .x$glance %>% mutate(outcome = .x$outcome, spec = "per_capita"))
@@ -190,8 +171,7 @@ gof_table <- bind_rows(
 
 print(gof_table)
 
-# --- 2.2 Coefficient tables (multivariate) ---
-
+# --- 2.2 Coefficient tables ---
 walk(crime_outcomes, function(outcome) {
   cat("\n\n====", outcome_labels[outcome], "| Share Model ====\n")
   print(share_models[[outcome]]$tidy %>% mutate(across(where(is.numeric), ~ round(.x, 3))))
@@ -202,16 +182,13 @@ walk(crime_outcomes, function(outcome) {
   print(pc_models[[outcome]]$tidy %>% mutate(across(where(is.numeric), ~ round(.x, 3))))
 })
 
-# --- 2.3 Effect size: standardized coefficients (beta weights) ---
-# Standardize all variables to z-scores so coefficients are
-# directly comparable across predictors regardless of units.
-
+# --- 2.3 Standardized coefficients ---
 fit_standardized <- function(outcome, predictors, data) {
   df <- data %>%
     select(all_of(c(outcome, predictors))) %>%
     filter(complete.cases(.)) %>%
     mutate(across(everything(), scale))
-  
+
   formula <- as.formula(paste(outcome, "~", paste(predictors, collapse = " + ")))
   lm(formula, data = df)
 }
@@ -222,64 +199,122 @@ names(share_std_models) <- crime_outcomes
 pc_std_models <- map(crime_outcomes, ~ fit_standardized(.x, pc_predictors, model_data))
 names(pc_std_models) <- crime_outcomes
 
-# --- 2.3b Heatmap of standardized coefficients (shares) ---
-# Useful visualization for README Key Findings section
+# =========================================================
+# --- 2.3b Heatmaps of standardized coefficients ---
+# Clean labels for GitHub Pages output
+# =========================================================
 
-std_coefs_share <- map_dfr(crime_outcomes, function(outcome) {
+share_predictor_labels <- c(
+  police_allocation_share                      = "Police",
+  streets_sanit_allocation_share               = "Streets & Sanitation",
+  transportation_allocation_share              = "Transportation",
+  planning_housing_commdev_allocation_share    = "Planning & Housing",
+  library_combined_allocation_share            = "Library",
+  human_family_youth_services_allocation_share = "Human & Family Services",
+  cps_state_share                              = "CPS State Funding"
+)
+
+pc_predictor_labels <- c(
+  police_allocation_pc                       = "Police",
+  streets_sanit_allocation_pc                = "Streets & Sanitation",
+  transportation_allocation_pc               = "Transportation",
+  planning_housing_commdev_allocation_pc     = "Planning & Housing",
+  library_combined_allocation_pc             = "Library",
+  human_family_youth_services_allocation_pc  = "Human & Family Services",
+  internal_ops_infrastructure_allocation_pc  = "Internal Ops & Infrastructure",
+  cps_state_share                            = "CPS State Funding"
+)
+
+# Share heatmap
+std_coefs_share_clean <- map_dfr(crime_outcomes, function(outcome) {
   tidy(share_std_models[[outcome]]) %>%
     filter(term != "(Intercept)") %>%
     mutate(
-      outcome        = outcome_labels[outcome],
-      significant    = p.value < 0.05
+      outcome_label   = outcome_labels[outcome],
+      predictor_label = dplyr::recode(term, !!!share_predictor_labels),
+      significant     = p.value < 0.05
     )
 })
 
-ggplot(std_coefs_share, aes(x = outcome, y = term, fill = estimate)) +
-  geom_tile(color = "white") +
+coef_heatmap_share <- ggplot(std_coefs_share_clean,
+    aes(x = outcome_label, y = predictor_label, fill = estimate)) +
+  geom_tile(color = "white", linewidth = 0.5) +
   geom_text(aes(
     label = paste0(round(estimate, 2), if_else(significant, "*", ""))
-  ), size = 3) +
+  ), size = 3.2, color = "black") +
   scale_fill_gradient2(
     low = "steelblue", mid = "white", high = "firebrick",
     midpoint = 0, name = "Std. Coef."
   ) +
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) +
   labs(
-    title    = "Standardized Coefficients: Budget Shares → Crime Rates",
-    subtitle = "Reference category: Internal Ops & Infrastructure | * p < 0.05",
-    x = NULL, y = NULL
+    title    = "Standardized Coefficients: Budget Shares vs. Crime Rates",
+    subtitle = "Reference category: Internal Ops & Infrastructure  |  * p < 0.05",
+    x        = NULL,
+    y        = NULL,
+    caption  = "Multivariate OLS regression. Interpret with caution — VIF = 9–16 for several predictors."
   ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title      = element_text(face = "bold", size = 13),
+    plot.subtitle   = element_text(color = "gray40", size = 10),
+    plot.caption    = element_text(color = "gray50", size = 9),
+    axis.text.x     = element_text(angle = 30, hjust = 1, size = 10),
+    axis.text.y     = element_text(size = 10),
+    panel.grid      = element_blank(),
+    legend.position = "right"
+  )
 
-# Same heatmap for per-capita spec
-std_coefs_pc <- map_dfr(crime_outcomes, function(outcome) {
+dir.create("assets", showWarnings = FALSE)
+ggsave("assets/coef_heatmap.png", coef_heatmap_share,
+       width = 10, height = 6, dpi = 150, bg = "white")
+
+# Per capita heatmap
+std_coefs_pc_clean <- map_dfr(crime_outcomes, function(outcome) {
   tidy(pc_std_models[[outcome]]) %>%
     filter(term != "(Intercept)") %>%
     mutate(
-      outcome     = outcome_labels[outcome],
-      significant = p.value < 0.05
+      outcome_label   = outcome_labels[outcome],
+      predictor_label = dplyr::recode(term, !!!pc_predictor_labels),
+      significant     = p.value < 0.05
     )
 })
 
-ggplot(std_coefs_pc, aes(x = outcome, y = term, fill = estimate)) +
-  geom_tile(color = "white") +
+coef_heatmap_pc <- ggplot(std_coefs_pc_clean,
+    aes(x = outcome_label, y = predictor_label, fill = estimate)) +
+  geom_tile(color = "white", linewidth = 0.5) +
   geom_text(aes(
     label = paste0(round(estimate, 2), if_else(significant, "*", ""))
-  ), size = 3) +
+  ), size = 3.2, color = "black") +
   scale_fill_gradient2(
     low = "steelblue", mid = "white", high = "firebrick",
     midpoint = 0, name = "Std. Coef."
   ) +
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) +
   labs(
-    title    = "Standardized Coefficients: Per Capita Spending → Crime Rates",
+    title    = "Standardized Coefficients: Per Capita Spending vs. Crime Rates",
     subtitle = "* p < 0.05",
-    x = NULL, y = NULL
+    x        = NULL,
+    y        = NULL,
+    caption  = "Multivariate OLS regression."
   ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title      = element_text(face = "bold", size = 13),
+    plot.subtitle   = element_text(color = "gray40", size = 10),
+    plot.caption    = element_text(color = "gray50", size = 9),
+    axis.text.x     = element_text(angle = 30, hjust = 1, size = 10),
+    axis.text.y     = element_text(size = 10),
+    panel.grid      = element_blank(),
+    legend.position = "right"
+  )
 
-# --- 2.4 Diagnostic plots for multivariate models ---
+ggsave("assets/coef_heatmap_pc.png", coef_heatmap_pc,
+       width = 10, height = 6.5, dpi = 150, bg = "white")
 
+# --- 2.4 Diagnostic plots ---
 walk(crime_outcomes, function(outcome) {
   par(mfrow = c(2, 2))
   plot(share_models[[outcome]]$model,
@@ -287,10 +322,7 @@ walk(crime_outcomes, function(outcome) {
   par(mfrow = c(1, 1))
 })
 
-# --- 2.5 VIF check on multivariate share models ---
-# Reminder: police (15.8), library (10.0), human services (9.2) are flagged.
-# This is why bivariate models in Step 1A are the primary results.
-
+# --- 2.5 VIF check ---
 walk(crime_outcomes, function(outcome) {
   cat("\nVIF —", outcome_labels[outcome], "(share):\n")
   print(round(vif(share_models[[outcome]]$model), 2))
@@ -298,9 +330,6 @@ walk(crime_outcomes, function(outcome) {
 
 # =========================================================
 # Step 3: Sensitivity check — controlling for year trend
-# If budget-crime associations survive after controlling for year,
-# they are more credible. If they collapse, the time trend
-# was the primary driver.
 # =========================================================
 
 bivariate_share_year <- map_dfr(share_predictors, function(pred) {
@@ -308,9 +337,9 @@ bivariate_share_year <- map_dfr(share_predictors, function(pred) {
     df <- model_data %>%
       select(all_of(c(outcome, pred, "year"))) %>%
       filter(complete.cases(.))
-    
+
     model <- lm(as.formula(paste(outcome, "~", pred, "+ year")), data = df)
-    
+
     tidy(model) %>%
       filter(term == pred) %>%
       mutate(
@@ -323,7 +352,6 @@ bivariate_share_year <- map_dfr(share_predictors, function(pred) {
   })
 })
 
-# Compare R² and significance before/after year control
 comparison <- bind_rows(
   bivariate_share %>% mutate(spec = "share_no_year"),
   bivariate_share_year %>% mutate(spec = "share_year_controlled")
@@ -332,11 +360,10 @@ comparison <- bind_rows(
   mutate(across(where(is.numeric), ~ round(.x, 3))) %>%
   arrange(predictor, outcome, spec)
 
-# Show cases where significance changes after controlling for year
 comparison %>%
   pivot_wider(
-    id_cols = c(predictor, outcome),
-    names_from = spec,
+    id_cols     = c(predictor, outcome),
+    names_from  = spec,
     values_from = c(p.value, r_squared, estimate)
   ) %>%
   mutate(
