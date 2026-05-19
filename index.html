@@ -67,7 +67,9 @@
     .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
     /* HERO */
     .hero {
-      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+      background:
+        linear-gradient(135deg, rgba(15,35,64,0.82) 0%, rgba(26,74,122,0.75) 100%),
+        url('images/chi_crime_rate_header_image.png') center center / cover no-repeat;
       color: var(--white);
       padding: 6rem 2rem 5rem;
       text-align: center;
@@ -374,7 +376,7 @@
       </div>
       <div class="context-card">
         <h3>The Social Investment Argument</h3>
-        <p>Thinkers from Martin Luther King Jr. to Angela Davis have argued that addressing root causes of crime — poverty, housing instability, lack of opportunity — is more effective than policing.</p>
+        <p>Thinkers from Martin Luther King Jr. to Angela Davis have argued that addressing root causes of crime, including poverty, housing instability, and lack of opportunity, is more effective than policing.</p>
       </div>
       <div class="context-card">
         <h3>What This Project Does</h3>
@@ -468,7 +470,7 @@
   <div class="container">
     <div class="section-label">The Data</div>
     <h2>How Chicago Spent Its Budget</h2>
-    <p class="lead">Before examining what the data shows, here is how the city's spending has looked across two decades — both as shares of the total budget and in inflation-adjusted dollars per resident.</p>
+    <p class="lead">Before examining what the data shows, here is how the city's spending has looked across two decades, both as shares of the total budget and in inflation-adjusted dollars per resident.</p>
 
     <div class="data-block">
       <div class="data-block-header">
@@ -492,7 +494,7 @@
         <iframe
           src="assets/per_capita_interactive.html"
           width="100%"
-          height="520"
+          height="600"
           frameborder="0"
           scrolling="no"
           title="Per capita city spending by department, 2001–2024"
@@ -539,7 +541,7 @@
              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
         <div class="viz-placeholder" style="display:none;">[ coef_heatmap.png — export from R and place in assets/ ]</div>
       </div>
-      <div class="finding-chart-caption">Standardized (beta) coefficients from multivariate OLS regression of budget shares on crime rates. Reference category: Internal Operations &amp; Infrastructure. * p &lt; 0.05. Interpret with caution — high multicollinearity (VIF = 9–16) among several predictors.</div>
+      <div class="finding-chart-caption">Standardized (beta) coefficients from multivariate OLS regression of budget shares on crime rates. Reference category: Internal Operations &amp; Infrastructure. * p &lt; 0.05. Interpret with caution due to high multicollinearity (VIF = 9 to 16) among several predictors.</div>
     </div>
 
     <!-- Findings 03 and 04 — text only, side by side -->

@@ -191,9 +191,9 @@ pc_interactive <- fig %>%
   layout(
     # Urban Institute: bold title case title, italic sentence case subtitle
     title = list(
-      text    = "<b>Per Capita City Spending by Department, 2001–2024</b><br><i style='font-size:13px;color:#5a6a7a'>Inflation-adjusted to 2024 USD · Click a department to isolate it; double-click to reset</i>",
-      font    = list(family = "Arial", size = 16, color = "#000000"),
-      x       = 0,
+      text    = "<b>Per Capita City Spending by Department, 2001–2024</b><br><i style='font-size:13px;color:#5a6a7a'>Inflation-adjusted to 2024 USD · Click a department in the legend to show or hide it</i>",
+      font    = list(family = "Arial", size = 18, color = "#000000"),
+      x       = 0.025,
       xanchor = "left",
       pad     = list(l = 10)
     ),
@@ -201,7 +201,7 @@ pc_interactive <- fig %>%
       title      = "",
       tickvals   = seq(2001, 2024, by = 3),
       tickformat = "d",
-      tickfont   = list(family = "Arial", size = 12, color = "#000000"),
+      tickfont   = list(family = "Arial", size = 14, color = "#000000"),
       showgrid   = FALSE,
       zeroline   = FALSE,
       linecolor  = "#d0dce8",
@@ -211,7 +211,7 @@ pc_interactive <- fig %>%
       title      = "",
       tickprefix = "$",
       tickformat = ",",
-      tickfont   = list(family = "Arial", size = 12, color = "#000000"),
+      tickfont   = list(family = "Arial", size = 14, color = "#000000"),
       showgrid   = TRUE,
       gridcolor  = "#e8e8e8",
       gridwidth  = 1,
@@ -222,10 +222,10 @@ pc_interactive <- fig %>%
       orientation = "h",
       x           = 0,
       xanchor     = "left",
-      y           = 1.02,
+      y           = 1.06,
       yanchor     = "top",
       tracegroupgap = 5,
-      font        = list(family = "Arial", size = 11, color = "#000000"),
+      font        = list(family = "Arial", size = 12, color = "#000000"),
       bgcolor     = "rgba(0,0,0,0)",
       borderwidth = 0
     ),
