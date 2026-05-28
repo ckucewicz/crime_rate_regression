@@ -324,6 +324,13 @@
     .finding-chart-body img { max-width: 100%; border-radius: 6px; }
     .finding-chart-caption { padding: 0.85rem 2rem; font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--border); background: var(--white); border-radius: 0 0 10px 10px; }
     .finding-cards-only { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+    .plain-language-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.35rem; margin-top: 0.85rem; }
+    .plain-language { background: rgba(255,255,255,0.55); border-left: 3px solid var(--blue); border-radius: 0 6px 6px 0; padding: 0.65rem 0.9rem; margin-bottom: 0.85rem; font-size: 0.9rem; color: var(--text); line-height: 1.6; }
+    .finding-card.neutral .plain-language { border-left-color: var(--accent); }
+    .finding-card.caution .plain-language { border-left-color: var(--red); }
+    .finding-card.positive .plain-language { border-left-color: var(--green); }
+    .finding-card.highlight .plain-language { border-left-color: #e0a020; }
+    .finding-divider { border: none; border-top: 1px solid rgba(0,0,0,0.08); margin: 0.75rem 0; }
     @media (max-width: 768px) {
       .finding-cards-only { grid-template-columns: 1fr; }
       .data-block-header, .data-block-body, .data-block-caption { padding-left: 1.25rem; padding-right: 1.25rem; }
@@ -519,6 +526,9 @@
       <div class="finding-card neutral" style="border-radius:10px 10px 0 0;">
         <div class="num">Finding 01</div>
         <h3>Most correlations are driven by a shared time trend</h3>
+        <div class="plain-language">Crime and city budgets both changed a lot over the same 20-year period, so it's hard to tell whether budget decisions actually drove crime trends or whether they just happened at the same time.</div>
+        <hr class="finding-divider">
+        <div class="plain-language-label">Technical detail</div>
         <p>Crime in Chicago declined substantially from 2001 to 2024, and budget compositions shifted over the same period. When year is controlled for, most budget-crime correlations disappear, suggesting they reflect parallel trends, not independent relationships.</p>
       </div>
       <div class="finding-chart-body">
@@ -534,6 +544,9 @@
       <div class="finding-card caution" style="border-radius:10px 10px 0 0;">
         <div class="num">Finding 02</div>
         <h3>Police, human services, and library shares don't hold up</h3>
+        <div class="plain-language">Even though police, human services, and library funding levels appear to track with crime rates, that relationship essentially disappears once you account for the fact that both were changing over time. We can't conclude that any of these caused crime to go up or down.</div>
+        <hr class="finding-divider">
+        <div class="plain-language-label">Technical detail</div>
         <p>Despite high bivariate R² values (0.72–0.81), police funding share, human services share, and library share all lose statistical significance once the time trend is accounted for. The data does not support strong independent claims about any of these.</p>
       </div>
       <div class="finding-chart-body">
@@ -549,11 +562,17 @@
       <div class="finding-card positive">
         <div class="num">Finding 03</div>
         <h3>Two predictors survive year control</h3>
+        <div class="plain-language">Streets &amp; Sanitation and Chicago Public Schools state funding show some relationship with crime even after accounting for time, but the direction is counterintuitive. More funding is associated with more crime, which suggests these variables are probably picking up on deeper socioeconomic conditions rather than a direct effect.</div>
+        <hr class="finding-divider">
+        <div class="plain-language-label">Technical detail</div>
         <p>Streets &amp; Sanitation share and CPS state funding share retain statistically significant associations with crime after controlling for year, though both in positive directions that are difficult to interpret causally and may reflect socioeconomic proxies rather than direct effects.</p>
       </div>
       <div class="finding-card highlight">
         <div class="num">Finding 04</div>
         <h3>Homicides are the hardest outcome to predict</h3>
+        <div class="plain-language">Homicides are the most reliable crime statistic since they're almost always reported, yet they show no meaningful relationship with any budget category. That's the strongest evidence in the data that budget allocation alone doesn't explain crime trends.</div>
+        <hr class="finding-divider">
+        <div class="plain-language-label">Technical detail</div>
         <p>Homicide rates, the most reliably reported crime type and least susceptible to detection bias, show the weakest associations with budget variables across all model specifications. No budget predictor significantly predicts homicide rates after controlling for year.</p>
       </div>
     </div>
